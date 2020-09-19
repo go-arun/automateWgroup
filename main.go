@@ -24,13 +24,12 @@ func adminPost( c *gin.Context){
 	c.Request.ParseForm()
 	name := c.Request.PostForm["uname"][0]
 	pwd  := c.Request.PostForm["pwd"][0]
-	fmt.Println("name pwd---------------->", name,pwd)
 	session.UsrCredentialsVerify(name,pwd)
-	// c.HTML(
-	// 	http.StatusOK,
-	// 	"admin_login.html",
-	// 	gin.H{"title": "Admin Login"},
-	// )
+	c.HTML(
+		http.StatusOK,
+		"admin_panel.html",
+		gin.H{"title": "Admin Panel"},
+	)
 }
 func main(){
 	db.Connect() //db Connection 
