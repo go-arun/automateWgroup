@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"strconv"
 	// Is required to connect db
 	_ "github.com/go-sql-driver/mysql"
 	// "github.com/go-arun/fishrider/modules/session"
@@ -45,13 +46,13 @@ func Connect(){
 // item_unit varchar(4) 
 // item_stock int(11)
 func InsertNewCatagory(itemName,itemUnit string)(string){
-	insForm, err := db.Connection.Prepare(
-		"INSERT INTO item_master(item_desc,item_unit) VALUES (?,?)"
+	insForm, err := Connection.Prepare(
+		"INSERT INTO item_master(item_desc,item_unit) VALUES (?,?)",
 	)
-	insForm.Exec(item_desc,itemUnit)
+	insForm.Exec(itemName,itemUnit)
 
 	//Geting last crated ID
-	selDB, err := db.Connection.Query("SELECT max(item_id) FROM item_master")
+	selDB, err := Connection.Query("SELECT max(item_id) FROM item_master")
 	if err !=nil {
 			panic(err.Error())
 	}
@@ -61,6 +62,8 @@ func InsertNewCatagory(itemName,itemUnit string)(string){
 		if err != nil {
 			panic(err.Error())
 		}
+		fmt.Println("Max Item-ID is --->:",itemID)
 	}
-	return string(itemID)
+	
+	return strconv.Itoa(itemID)
 }

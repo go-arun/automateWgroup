@@ -29,6 +29,7 @@ func adminPost( c *gin.Context){
 	c.Request.ParseForm()
 	name := c.Request.PostForm["uname"][0]
 	pwd  := c.Request.PostForm["pwd"][0]
+
 	session.UsrCredentialsVerify(name,pwd)
 	c.HTML(
 		http.StatusOK,
@@ -37,14 +38,23 @@ func adminPost( c *gin.Context){
 	)
 }
 func adminPanelPost(c *gin.Context){
-	file, header, err := c.Request.FormFile("file") 
-	fmt.Println("file----",file)
+	category := c.PostForm("category")
+	unit  := c.PostForm("unit")
+	file, header, err := c.Request.FormFile("filename") 
+	if db.Dbug{fmt.Println("New category and unit is --",category,unit)}
+
+	//Inserting New Catagory into DB
+	itemID := db.InsertNewCatagory(category,unit)
 	if err != nil {
 	  c.String(http.StatusBadRequest, fmt.Sprintf("file err : %s", err.Error()))
 	  return
 	}
 	filename := header.Filename
-	filename = fileoperation.ReplaceFileName(filename,"20") // extenssion will be same
+	fmt.Println("file Name Before Replacing & ID returned from DB --->:",filename,itemID)
+	filename = fileoperation.ReplaceFileName(filename,itemID) // Replace Files 'name' part with itemID
+	fmt.Println("file Name After Replacing  --->:",filename)
+
+	fmt.Println("FileName Changed to ",filename)
 	out, err := os.Create("pics/" + filename)
 	if err != nil {
 	  log.Fatal(err)
@@ -56,14 +66,6 @@ func adminPanelPost(c *gin.Context){
 	}
  }
 
-
-
-
-
-const (
-	SR_File_Max_Bytes = 1024 * 1024 * 2
-)
-
 func main(){
 	db.Connect() //db Connection 
 	router := gin.Default()
@@ -72,8 +74,6 @@ func main(){
 	router.POST("/admin", adminPost)
 	router.POST("/admin_panel", adminPanelPost)
 	router.StaticFS("/file", http.Dir("pics"))
-
-
 	router.Run()
 }
 
