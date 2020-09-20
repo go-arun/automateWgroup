@@ -13,17 +13,21 @@
     <div class="container my-5">
         <div class="lg-12" style="text-align: center; border: 0px;"><p>Admin-Panel</p></div>
         <div class="row">
-            <div class="lg-4">
-            <div class="admn_buttons btn btn-primary m-1">Purchase</div><br>
-            <div class="admn_buttons btn btn-primary m-1">Execure Orders</div><br>
-            <div class="admn_buttons btn btn-primary m-1">Stock Adjust</div><br>
-            <div class="admn_buttons btn btn-primary m-1">New Fish Catgory</div><br>
-            <div class="admn_buttons btn btn-primary m-1">Reports</div><br>
-            <div class="admn_buttons btn btn-primary m-1">About</div><br>
-        </div>
-      <div class="lg-8">
-        <!--Main rightSide-->
-      </div>
+              <div class="lg-4">
+              <div class="admn_buttons btn btn-primary m-1">Purchase</div><br>
+              <div class="admn_buttons btn btn-primary m-1">Execure Orders</div><br>
+              <div class="admn_buttons btn btn-primary m-1">Stock Adjust</div><br>
+              <div class="admn_buttons btn btn-primary m-1">New Fish Catgory</div><br>
+              <div class="admn_buttons btn btn-primary m-1">Reports</div><br>
+              <div class="admn_buttons btn btn-primary m-1">About</div><br>
+          </div>
+            <div class="lg-12 " style="border: 0px;"><!--Main DIV rightSide-->
+              <form action="/admin_panel" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" />
+                <input type="submit" value="upload" />
+            </form>
+            
+            </div>
       </div>
     </div>
    
