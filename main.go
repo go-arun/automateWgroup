@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/go-arun/fishrider/modules/db"
 	"github.com/go-arun/fishrider/modules/session"
+	"github.com/go-arun/fishrider/modules/fileoperation"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
@@ -37,12 +38,14 @@ func adminPost( c *gin.Context){
 }
 func adminPanelPost(c *gin.Context){
 	file, header, err := c.Request.FormFile("file") 
+	fmt.Println("file----",file)
 	if err != nil {
 	  c.String(http.StatusBadRequest, fmt.Sprintf("file err : %s", err.Error()))
 	  return
 	}
 	filename := header.Filename
-	out, err := os.Create("public/" + filename)
+	filename = fileoperation.ReplaceFileName(filename,"20") // extenssion will be same
+	out, err := os.Create("pics/" + filename)
 	if err != nil {
 	  log.Fatal(err)
 	}
@@ -51,8 +54,7 @@ func adminPanelPost(c *gin.Context){
 	if err != nil {
 	  log.Fatal(err)
 	}
- 
-}
+ }
 
 
 
@@ -69,7 +71,7 @@ func main(){
 	router.GET("/admin", adminGet)
 	router.POST("/admin", adminPost)
 	router.POST("/admin_panel", adminPanelPost)
-	router.StaticFS("/file", http.Dir("public"))
+	router.StaticFS("/file", http.Dir("pics"))
 
 
 	router.Run()
