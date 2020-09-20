@@ -45,11 +45,14 @@ func Connect(){
 // item_buy_price decimal(2,0) 
 // item_unit varchar(4) 
 // item_stock int(11)
-func InsertNewCatagory(itemName,itemUnit string)(string){
+func InsertNewCatagory(itemName,itemUnit string)(string,error){
 	insForm, err := Connection.Prepare(
 		"INSERT INTO item_master(item_desc,item_unit) VALUES (?,?)",
 	)
-	insForm.Exec(itemName,itemUnit)
+	_,err = insForm.Exec(itemName,itemUnit)
+	if err != nil {
+		return "",err // If insert failed return error Only chance is while trying for duplicate entry
+	}
 
 	//Geting last crated ID
 	selDB, err := Connection.Query("SELECT max(item_id) FROM item_master")
@@ -62,8 +65,7 @@ func InsertNewCatagory(itemName,itemUnit string)(string){
 		if err != nil {
 			panic(err.Error())
 		}
-		fmt.Println("Max Item-ID is --->:",itemID)
 	}
 	
-	return strconv.Itoa(itemID)
+	return strconv.Itoa(itemID),nil
 }

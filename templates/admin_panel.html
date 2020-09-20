@@ -14,25 +14,39 @@
         <div class="lg-12" style="text-align: center; border: 0px;"><p>Admin-Panel</p></div>
         <div class="row">
               <div class="lg-4">
-              <div class="admn_buttons btn btn-primary m-1">Purchase</div><br>
-              <div class="admn_buttons btn btn-primary m-1">Execure Orders</div><br>
-              <div class="admn_buttons btn btn-primary m-1">Stock Adjust</div><br>
-              <div class="admn_buttons btn btn-primary m-1">New Fish Catgory</div><br>
-              <div class="admn_buttons btn btn-primary m-1">Reports</div><br>
-              <div class="admn_buttons btn btn-primary m-1">About</div><br>
+              <div id="purchase" onclick="toggleCtrls(this.id)" class="admn_buttons btn btn-primary m-1">Purchase</div><br>
+              <div id="orders" class="admn_buttons btn btn-primary m-1">Execure Orders</div><br>
+              <div id="stock" class="admn_buttons btn btn-primary m-1">Stock Adjust</div><br>
+              <div id="category" onclick="toggleCtrls(this.id)" class="admn_buttons btn btn-primary m-1">New Fish Catgory</div><br>
+              <div id="reports" class="admn_buttons btn btn-primary m-1">Reports</div><br>
+              <div id="about" class="admn_buttons btn btn-primary m-1">About</div><br>
           </div>
             <div class="lg-12 " style="border: 0px;"><!--Main DIV rightSide-->
               <form action="/admin_panel" method="post" enctype="multipart/form-data">
-                <input class="m-1" type="text" placeholder="New Catagory Name" name="category">
-                <input class="m-1" type="file" name="filename" /><br>
-                <select name="unit" id="unit" style="width: 192px;">
-                  <option value="SEL">Choose Unit</option>
-                  <option value="KG">Kg</option>
-                  <option value="NO">Number</option>
-                </select><br>
-                <input class="m-1" type="submit" value="upload" />
-
-            </form>
+                  <input id="optedto" name='action' style="visibility:hidden"  value="10">  <!-- to pass which operation to do -->
+                  <div id="add_cate">
+                      <input class="m-1" type="text" placeholder="New Catagory Name" name="category">
+                      <input class="m-1" type="file" name="filename" /><br>
+                      <select name="unit" id="unit" style="width: 192px;">
+                        <option value="SEL">Choose Unit</option>
+                        <option value="KG">Kg</option>
+                        <option value="NO">Number</option>
+                      </select><br>
+                      <input class="m-1" type="submit" value="Update" />
+                  </div>
+                  <div id="purch_itm">
+                    <select name="unit" id="unit" style="width: 192px;">
+                      <option value="SEL">Select Fish</option>
+                      {{ range .FishCatagories }}
+                        <option value="{{.Id}}">{{.fishName}}</option>
+                      {{ end }}
+                    </select>
+                    <input class="m-1" type="text" placeholder="Purchasing Quandity" name="category">
+                    <input class="m-1" type="text" placeholder="Purchasing Price(Rs)" name="category"><br>
+                    <input class="m-1" type="text" placeholder="Selling Price(Rs)" name="category"><br>
+                    <input class="m-1" type="submit" value="Update" />
+                </div>
+              </form>
             
             </div>
       </div>
@@ -43,6 +57,23 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <!-- Toggle control-->
+    <script>
+      function toggleCtrls(clicked_id) {
+        document.getElementById("optedto").value = clicked_id
+        var category = document.getElementById("add_cate");
+        var purch_itm = document.getElementById("purch_itm");
+        if (clicked_id === "purchase"){
+          purch_itm.style.display = "block";
+          category.style.display = "none";
+        }
+        if (clicked_id === "category"){
+          purch_itm.style.display = "none";
+          category.style.display = "block";
+        }
+      }
+      </script>
+    <!--End-->
     <style>
       div {
   border-style: solid;

@@ -12,6 +12,34 @@ import (
 	"io"
 
 )
+func addNewCatagory(c *gin.Context){
+	category := c.PostForm("category")
+	unit  := c.PostForm("unit")
+	file, header, err := c.Request.FormFile("filename") 
+	if db.Dbug{fmt.Println("New category and unit is --",category,unit)}
+	if err != nil {
+	  c.String(http.StatusBadRequest, fmt.Sprintf("file err : %s", err.Error()))
+	  return
+	}
+	//Inserting New Catagory into DB
+	itemID,err := db.InsertNewCatagory(category,unit)
+	if err != nil{// TBD : If insert failed ,it is showing error diretly in page , user need an alert 
+		c.String(http.StatusBadRequest, fmt.Sprintf("file err : %s", err.Error()))
+		return
+	}
+	filename := header.Filename
+	filename = fileoperation.ReplaceFileName(filename,itemID) // Replace Files 'name' part with itemID
+	if db.Dbug {fmt.Println("file Name Before Replacing & ID returned from DB --->:",filename,itemID)}
+	out, err := os.Create("pics/" + filename)
+	if err != nil {
+	  log.Fatal(err)
+	}
+	defer out.Close()
+	_, err = io.Copy(out, file)
+	if err != nil {
+	  log.Fatal(err)
+	}
+}
 
 func adminGet( c *gin.Context){
 	if db.Dbug{
@@ -38,32 +66,13 @@ func adminPost( c *gin.Context){
 	)
 }
 func adminPanelPost(c *gin.Context){
-	category := c.PostForm("category")
-	unit  := c.PostForm("unit")
-	file, header, err := c.Request.FormFile("filename") 
-	if db.Dbug{fmt.Println("New category and unit is --",category,unit)}
-
-	//Inserting New Catagory into DB
-	itemID := db.InsertNewCatagory(category,unit)
-	if err != nil {
-	  c.String(http.StatusBadRequest, fmt.Sprintf("file err : %s", err.Error()))
-	  return
+	operation :=  c.PostForm("action") // baed on this , will decide which operation need to done 
+	switch operation {
+	//add new catagory	
+	case "category":
+		addNewCatagory(c)
 	}
-	filename := header.Filename
-	fmt.Println("file Name Before Replacing & ID returned from DB --->:",filename,itemID)
-	filename = fileoperation.ReplaceFileName(filename,itemID) // Replace Files 'name' part with itemID
-	fmt.Println("file Name After Replacing  --->:",filename)
-
-	fmt.Println("FileName Changed to ",filename)
-	out, err := os.Create("pics/" + filename)
-	if err != nil {
-	  log.Fatal(err)
-	}
-	defer out.Close()
-	_, err = io.Copy(out, file)
-	if err != nil {
-	  log.Fatal(err)
-	}
+	
  }
 
 func main(){
