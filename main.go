@@ -134,11 +134,26 @@ func adminPanelPost(c *gin.Context){
  }
 
  func adminPanelGet(c *gin.Context){
-	c.HTML(
-		http.StatusOK,
-		"admin_panel.html",
-		gin.H{"title": "Admin Panel"},
-	)
+	//Checking for any active sessions
+	IsSectionActive := session.SessinStatus(c,"admin_session_cookie")
+	if IsSectionActive {
+		populateCategoryItems(c)
+	}else{
+		fmt.Println("No Active Sessions found ")
+		c.Redirect(http.StatusMovedPermanently, "/admin") // redirecting to admin loging page
+		c.Abort()
+		// c.HTML(
+		// 	http.StatusOK,
+		// 	"admin_login.html",
+		// 	gin.H{"title": "Admin Login"},
+		// )
+	}
+ }
+
+ func logoutGet(c *gin.Context){
+	session.RemoveSessionIDFromDB(c)
+	c.Redirect(http.StatusMovedPermanently, "/admin") // redirecting to admin loging page
+	c.Abort()
  }
 func main(){
 	db.Connect() //db Connection 
@@ -148,6 +163,7 @@ func main(){
 	router.POST("/admin", adminPost)
 	router.POST("/admin_panel", adminPanelPost)
 	router.GET("/admin_panel", adminPanelGet)
+	router.GET("/logout", logoutGet)
 	router.StaticFS("/file", http.Dir("pics"))
 	router.Run()
 }

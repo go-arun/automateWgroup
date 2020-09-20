@@ -23,12 +23,12 @@
               <div id="logout" onclick="location.href='http://172.18.91.232:8080/logout';" class="admn_buttons btn btn-primary m-1">Logout</div><br>
           </div>
             <div class="lg-12 " style="border: 0px;"><!--Main DIV rightSide-->
-              <form id="admin_form" action="/admin_panel" method="post" enctype="multipart/form-data">
+              <form id="admin_form" action="/admin_panel" method="post" enctype="multipart/form-data" onsubmit="return verify_inputs()">
                   <input id="optedto" name='action' style="visibility:hidden"  value="10">  <!-- to pass which operation to do -->
                   <div id="add_cate" style="display: none;">
-                      <input class="m-1" type="text" placeholder="New Catagory Name" name="category">
-                      <input class="m-1" type="file" name="filename" /><br>
-                      <select name="unit" id="unit" style="width: 192px;">
+                      <input id="new_cat" class="m-1" type="text" placeholder="New Catagory Name" name="category">
+                      <input id="f_name" class="m-1" type="file" name="filename" /><br>
+                      <select id="unit" name="unit" id="unit" style="width: 192px;">
                         <option value="SEL">Choose Unit</option>
                         <option value="KG">Kg</option>
                         <option value="NO">Number</option>
@@ -42,9 +42,9 @@
                         <option value="{{.ID}}">{{.Name}}</option>
                       {{ end }}
                     </select>
-                    <input class="m-1" type="text" placeholder="Purchasing Price(Rs)" name="purch_price">
-                    <input class="m-1" type="text" placeholder="Selling Price(Rs)" name="selling_price"><br>
-                    <input class="m-1" type="text" placeholder="Purchasing Quandity" name="purch_qty">
+                    <input id="p_price" class="m-1" type="text" placeholder="Purchasing Price(Rs)" name="purch_price">
+                    <input id="s_price" class="m-1" type="text" placeholder="Selling Price(Rs)" name="selling_price"><br>
+                    <input id="p_qty" class="m-1" type="text" placeholder="Purchasing Quandity" name="purch_qty">
                     <div class="card"></div>
                     <img id="fishImg" class="m-1" src="http://172.18.91.232:8080/file/SEL.jpg" style="border: 1px solid #555;" alt="Fish Pic" width="190" height="150"><br>
                     <input class="m-1" type="submit" value="Update" />
@@ -62,6 +62,33 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <!-- Toggle control-->
     <script>
+      //Verify Inputs
+      function  verify_inputs(){
+        var operation = document.getElementById("optedto").value 
+        if (operation == "purchase"){
+              var fishid = document.getElementById("fishname").value
+              var pPrice = document.getElementById("p_price").value;
+              var sPrice = document.getElementById("s_price").value;
+              var pQty = document.getElementById("p_qty").value;
+              if (fishid=="SEL" || pPrice =="" || sPrice=="" || pQty==""  ){
+                  alert("Please Provide all Imputs !!")
+                  return false
+              }
+              alert("Details Updated Successfully!!")
+        }else if(operation == "category"){
+          var fileName = document.getElementById("f_name").value
+          var newCategory = document.getElementById("new_cat").value
+          var unit = document.getElementById("unit").value
+          if (unit=="SEL" || fileName =="" || newCategory=="" ){
+                  alert("Please Provide all Imputs !!")
+                  return false
+              }
+              alert("Details Updated Successfully!!")
+
+        }
+
+        }
+      //to change image based on select tag
       function changeImageToo(){
         var fishid = document.getElementById("fishname").value
         document.getElementById("fishImg").src = "http://172.18.91.232:8080/file/" + fishid + ".jpg"
@@ -81,6 +108,13 @@
         }
       }
       </script>
+      <script>
+          function preback(){
+            window.history.forward();
+        }
+        setTimeout("preback()",0);
+        window.onunload=function(){null};
+       </script>
     <!--End-->
     <style>
       div {

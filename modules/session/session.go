@@ -38,6 +38,23 @@ func AddSessionIDToDB(userName string)(string) {
 insForm.Exec(sessID,userName)
     return sessID
 }
+//RemoveSessionIDFromDB ...
+func RemoveSessionIDFromDB(c *gin.Context) {
+	sessionCookie,_ := c.Cookie ("admin_session_cookie")
+
+	insForm, err := db.Connection.Prepare("UPDATE admin_master SET admin_sesid='' WHERE admin_sesid = ?")
+	if err != nil {
+		   panic(err.Error())
+	}
+insForm.Exec(sessionCookie)
+// Deleting cookie
+c.SetCookie("admin_session_cookie", 
+"",
+-1, // delete now !!
+"/",
+"",false,false,
+)
+}
 
 
 //HashPassword .. 
