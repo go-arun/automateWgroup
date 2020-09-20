@@ -12,6 +12,40 @@ import (
 	"io"
 
 )
+//Item ... to store item details while retriving from DB
+type Item struct {
+	ID int
+	Name,Unit string
+}
+func populateCategoryItems(c *gin.Context){
+	selDB, err := db.Connection.Query("SELECT item_id,item_desc,item_unit FROM item_master")
+	if err !=nil {
+			panic(err.Error())
+	}
+
+	item := Item{}
+	itemCollection := []Item{}
+
+	for selDB.Next(){
+		var id int
+		var name string
+		var unit string
+		err = selDB.Scan(&id,&name,&unit)
+		if err != nil {
+			panic(err.Error())
+		}
+		item.ID = id
+		item.Name = name
+		item.Unit = unit
+		itemCollection = append(itemCollection,item)
+	}
+	c.HTML(											
+		http.StatusOK,
+		"admin_panel.html",gin.H{
+			"FishCatagories": itemCollection,
+		})
+}
+
 func addNewCatagory(c *gin.Context){
 	category := c.PostForm("category")
 	unit  := c.PostForm("unit")
@@ -59,11 +93,8 @@ func adminPost( c *gin.Context){
 	pwd  := c.Request.PostForm["pwd"][0]
 
 	session.UsrCredentialsVerify(name,pwd)
-	c.HTML(
-		http.StatusOK,
-		"admin_panel.html",
-		gin.H{"title": "Admin Panel"},
-	)
+	populateCategoryItems(c)
+
 }
 func adminPanelPost(c *gin.Context){
 	operation :=  c.PostForm("action") // baed on this , will decide which operation need to done 
@@ -71,6 +102,7 @@ func adminPanelPost(c *gin.Context){
 	//add new catagory	
 	case "category":
 		addNewCatagory(c)
+	case "purchase":
 	}
 	
  }
