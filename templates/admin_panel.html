@@ -24,7 +24,7 @@
             <div class="lg-12 " style="border: 0px;"><!--Main DIV rightSide-->
               <form action="/admin_panel" method="post" enctype="multipart/form-data">
                   <input id="optedto" name='action' style="visibility:hidden"  value="10">  <!-- to pass which operation to do -->
-                  <div id="add_cate">
+                  <div id="add_cate" style="display: none;">
                       <input class="m-1" type="text" placeholder="New Catagory Name" name="category">
                       <input class="m-1" type="file" name="filename" /><br>
                       <select name="unit" id="unit" style="width: 192px;">
@@ -34,9 +34,9 @@
                       </select><br>
                       <input class="m-1" type="submit" value="Update" />
                   </div>
-                  <div id="purch_itm">
-                    <select name="unit" id="unit" style="width: 192px;">
-                      <option value="SEL">Select Fish</option>
+                  <div id="purch_itm" style="display: none;">
+                    <select  onchange="changeImageToo()" name="fishname" id="fishname" style="width: 192px;">
+                      <option value="SEL" >Select Fish</option>
                       {{ range .FishCatagories }}
                         <option value="{{.ID}}">{{.Name}}</option>
                       {{ end }}
@@ -44,6 +44,8 @@
                     <input class="m-1" type="text" placeholder="Purchasing Quandity" name="category">
                     <input class="m-1" type="text" placeholder="Purchasing Price(Rs)" name="category"><br>
                     <input class="m-1" type="text" placeholder="Selling Price(Rs)" name="category"><br>
+                    <div class="card"></div>
+                    <img id="fishImg" class="m-1" src="http://172.18.91.232:8080/file/18.jpg" style="border: 1px solid #555;" alt="Fish Pic" width="190" height="150"><br>
                     <input class="m-1" type="submit" value="Update" />
                 </div>
               </form>
@@ -59,6 +61,11 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <!-- Toggle control-->
     <script>
+      function changeImageToo(){
+        var fishid = document.getElementById("fishname").value
+        document.getElementById("fishImg").src = "http://172.18.91.232:8080/file/" + fishid + ".jpg"
+
+      }
       function toggleCtrls(clicked_id) {
         document.getElementById("optedto").value = clicked_id
         var category = document.getElementById("add_cate");

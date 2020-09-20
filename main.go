@@ -98,6 +98,7 @@ func adminPost( c *gin.Context){
 }
 func adminPanelPost(c *gin.Context){
 	operation :=  c.PostForm("action") // baed on this , will decide which operation need to done 
+	fmt.Println("User Opted action is :  ",operation)
 	switch operation {
 	//add new catagory	
 	case "category":
