@@ -10,6 +10,7 @@
 
     <title>{{.title}}</title>
   </head>
+  <body>
     <div class="container my-5">
         <div class="lg-12" style="text-align: center; border: 0px;"><p>Admin-Panel</p></div>
         <div class="row">
@@ -19,10 +20,10 @@
               <div id="stock" class="admn_buttons btn btn-primary m-1">Stock Adjust</div><br>
               <div id="category" onclick="toggleCtrls(this.id)" class="admn_buttons btn btn-primary m-1">New Fish Catgory</div><br>
               <div id="reports" class="admn_buttons btn btn-primary m-1">Reports</div><br>
-              <div id="about" class="admn_buttons btn btn-primary m-1">About</div><br>
+              <div id="logout" onclick="location.href='http://172.18.91.232:8080/logout';" class="admn_buttons btn btn-primary m-1">Logout</div><br>
           </div>
             <div class="lg-12 " style="border: 0px;"><!--Main DIV rightSide-->
-              <form action="/admin_panel" method="post" enctype="multipart/form-data">
+              <form id="admin_form" action="/admin_panel" method="post" enctype="multipart/form-data">
                   <input id="optedto" name='action' style="visibility:hidden"  value="10">  <!-- to pass which operation to do -->
                   <div id="add_cate" style="display: none;">
                       <input class="m-1" type="text" placeholder="New Catagory Name" name="category">
@@ -41,9 +42,9 @@
                         <option value="{{.ID}}">{{.Name}}</option>
                       {{ end }}
                     </select>
-                    <input class="m-1" type="text" placeholder="Purchasing Price(Rs)" name="category">
-                    <input class="m-1" type="text" placeholder="Selling Price(Rs)" name="category"><br>
-                    <input class="m-1" type="text" placeholder="Purchasing Quandity" name="category">
+                    <input class="m-1" type="text" placeholder="Purchasing Price(Rs)" name="purch_price">
+                    <input class="m-1" type="text" placeholder="Selling Price(Rs)" name="selling_price"><br>
+                    <input class="m-1" type="text" placeholder="Purchasing Quandity" name="purch_qty">
                     <div class="card"></div>
                     <img id="fishImg" class="m-1" src="http://172.18.91.232:8080/file/SEL.jpg" style="border: 1px solid #555;" alt="Fish Pic" width="190" height="150"><br>
                     <input class="m-1" type="submit" value="Update" />

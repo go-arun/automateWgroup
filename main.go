@@ -17,6 +17,24 @@ type Item struct {
 	ID int
 	Name,Unit string
 }
+func updateStock(c *gin.Context){
+	itemID  := c.PostForm("fishname")
+	pPrice  := c.PostForm("purch_price")
+	sPrice  := c.PostForm("selling_price")
+	pQty  := c.PostForm("purch_qty")
+	strSQL := "UPDATE item_master SET item_stock = item_stock + ?,item_sel_price = ?,item_buy_price = ? WHERE item_id = ?"
+	updForm, err := db.Connection.Prepare(strSQL)
+	if err != nil {
+		 panic(err.Error())
+ 	}
+
+	 updForm.Exec(pQty,sPrice,pPrice,itemID)
+	 c.HTML(
+		http.StatusOK,
+		"admin_panel.html",
+		gin.H{"title": "Admin Panel"},
+	)
+}
 func populateCategoryItems(c *gin.Context){
 	selDB, err := db.Connection.Query("SELECT item_id,item_desc,item_unit FROM item_master")
 	if err !=nil {
@@ -76,38 +94,52 @@ func addNewCatagory(c *gin.Context){
 }
 
 func adminGet( c *gin.Context){
-	if db.Dbug{
-		fmt.Println("dm-Inside func-adminGet")
+	//Checking for any active sessions
+	IsSectionActive := session.SessinStatus(c,"admin_session_cookie")
+	if IsSectionActive {
+		populateCategoryItems(c)
+	}else{
+		fmt.Println("No Active Sessions found ")
+		c.HTML(
+			http.StatusOK,
+			"admin_login.html",
+			gin.H{"title": "Admin Login"},
+		)
 	}
-	c.HTML(
-		http.StatusOK,
-		"admin_login.html",
-		gin.H{"title": "Admin Login"},
-	)
 }
-
 func adminPost( c *gin.Context){
 	if db.Dbug{fmt.Println("dm-Inside func-adminPost")}
 	c.Request.ParseForm()
 	name := c.Request.PostForm["uname"][0]
 	pwd  := c.Request.PostForm["pwd"][0]
 
-	session.UsrCredentialsVerify(name,pwd)
-	populateCategoryItems(c)
+	 if (session.UsrCredentialsVerify(name,pwd)){//return value 'true' means creadentias are matching ..
+		 //SetNewSessionID
+		session.SetSessionCookie(c,name,"admin_session_cookie")
+		populateCategoryItems(c)
+	 }
 
 }
 func adminPanelPost(c *gin.Context){
-	operation :=  c.PostForm("action") // baed on this , will decide which operation need to done 
+	operation :=  c.PostForm("action") // based on this , will decide which operation need to done 
 	fmt.Println("User Opted action is :  ",operation)
 	switch operation {
 	//add new catagory	
 	case "category":
 		addNewCatagory(c)
 	case "purchase":
+		updateStock(c)
 	}
 	
  }
 
+ func adminPanelGet(c *gin.Context){
+	c.HTML(
+		http.StatusOK,
+		"admin_panel.html",
+		gin.H{"title": "Admin Panel"},
+	)
+ }
 func main(){
 	db.Connect() //db Connection 
 	router := gin.Default()
@@ -115,6 +147,7 @@ func main(){
 	router.GET("/admin", adminGet)
 	router.POST("/admin", adminPost)
 	router.POST("/admin_panel", adminPanelPost)
+	router.GET("/admin_panel", adminPanelGet)
 	router.StaticFS("/file", http.Dir("pics"))
 	router.Run()
 }

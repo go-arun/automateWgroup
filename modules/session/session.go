@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"golang.org/x/crypto/bcrypt"
 	"github.com/go-arun/fishrider/modules/db"
+	"github.com/gin-gonic/gin"
+
 
 )
 
@@ -28,7 +30,7 @@ func GenerateNewSessionID() (string, error) {
 func AddSessionIDToDB(userName string)(string) {
 	sessID,_ := GenerateNewSessionID()
 
-	insForm, err := db.Connection.Prepare("UPDATE admin_master SET admin_sesid=? WHERE admin_name= '?'")
+	insForm, err := db.Connection.Prepare("UPDATE admin_master SET admin_sesid=? WHERE admin_name= ?")
 	if err != nil {
 		   panic(err.Error())
 	}
@@ -50,7 +52,7 @@ func CheckPasswordHash(password, hash string) bool {
 }
 
 //UsrCredentialsVerify ...
-func UsrCredentialsVerify(uname,pwd string){
+func UsrCredentialsVerify(uname,pwd string)(bool){
 	selDB, err := db.Connection.Query("SELECT admin_passwd,admin_sesid FROM admin_master WHERE admin_name = '" + uname + "' ")
 	if err !=nil {
 			panic(err.Error())
@@ -67,30 +69,34 @@ func UsrCredentialsVerify(uname,pwd string){
 	if pwdInDB != "" {
 		result := CheckPasswordHash(pwd,pwdInDB)
 		fmt.Println("PasswdMached-->",result)
+		return result
+	}else{
+		return false // No Such user
 	}
 	
 }
 
-//SessinStatus ...
-// func SessinStatus(c *gin.Context,cookieName string)(sesStatus bool) { 
-// 	sessionCookie,_ := c.Cookie (cookieName)
-// 	if sessionCookie == "" { // no cookie found 
-// 		return sesStatus // by default 'recordFound' val will be false
-// 	} //cookie received frim boeser still we need to ensure from database too
-// 	sesStatus,_ = database.TraceUserWithSID(sessionCookie)
-// 	fmt.Println("Admin Session Exissts ?",sesStatus)
-// 	return sesStatus // 
-//}
-//SetSessionCookie ...
-// func SetSessionCookie(sessionCookieName string){
+//SessinStatus ...return true if there is an active admin session
+func SessinStatus(c *gin.Context,cookieName string)(sesStatus bool) { 
+	sessionCookie,_ := c.Cookie (cookieName)
+	if sessionCookie == "" { // no cookie found 
+		return sesStatus // by default 'recordFound' val will be false
+	} //cookie received frim browser still we need to ensure from database too
+	sesStatus,_ = db.TraceUserWithSID(sessionCookie)
+	fmt.Println("Admin Session Exissts ?",sesStatus)
+	return sesStatus // 
+}
 
-// 	sessionID := db.AddSessionID() // Generate a new SSID and insert to DB
-// 	c.SetCookie(sessionCookieName,
-// 	sessionID,
-// 	3600*12, // 12hrs
-// 	"/",
-// 	"",false,false, //domain excluded 
-// 	)
-// }
+//SetSessionCookie ...
+func SetSessionCookie(c *gin.Context,adminUserName,sessionCookieName string){
+
+	sessionID := AddSessionIDToDB(adminUserName) // Generate a new SSID and insert to DB
+	c.SetCookie(sessionCookieName,
+	sessionID,
+	3600*12, // 12hrs
+	"/",
+	"",false,false, //domain excluded 
+	)
+}
 
 

@@ -69,3 +69,22 @@ func InsertNewCatagory(itemName,itemUnit string)(string,error){
 	
 	return strconv.Itoa(itemID),nil
 }
+
+//TraceUserWithSID ... locate user with sessID
+func TraceUserWithSID(sessCookie string)(sessStatus bool, adminName string){
+	selDB, err := Connection.Query("SELECT admin_name FROM admin_master WHERE admin_sesid = '" + sessCookie + "' ")
+	if err !=nil {
+			panic(err.Error())
+	}
+	for selDB.Next(){
+		err = selDB.Scan(&adminName)
+		if err != nil {
+			panic(err.Error())
+		}
+	}
+	if adminName != "" {
+		sessStatus = true
+		return sessStatus,adminName
+	}
+	return sessStatus,adminName
+}
