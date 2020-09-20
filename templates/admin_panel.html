@@ -23,8 +23,15 @@
           </div>
             <div class="lg-12 " style="border: 0px;"><!--Main DIV rightSide-->
               <form action="/admin_panel" method="post" enctype="multipart/form-data">
+                <input class="m-1" type="text" placeholder="New Catagory Name" name="new_catagory">
                 <input class="m-1" type="file" name="file" /><br>
+                <select name="unit" id="unit">
+                  <option value="SEL">Choose Unit</option>
+                  <option value="KG">Kg</option>
+                  <option value="NO">Number</option>
+                </select><br>
                 <input class="m-1" type="submit" value="upload" />
+
             </form>
             
             </div>

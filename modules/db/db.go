@@ -38,3 +38,29 @@ func Connect(){
 		}
 	}
 }
+
+// item_desc varchar(45) 
+// item_sel_price decimal(2,0) 
+// item_buy_price decimal(2,0) 
+// item_unit varchar(4) 
+// item_stock int(11)
+func InsertNewCatagory(itemName,itemUnit string)(string){
+	insForm, err := db.Connection.Prepare(
+		"INSERT INTO item_master(item_desc,item_unit) VALUES (?,?)"
+	)
+	insForm.Exec(item_desc,itemUnit)
+
+	//Geting last crated ID
+	selDB, err := db.Connection.Query("SELECT max(item_id) FROM item_master")
+	if err !=nil {
+			panic(err.Error())
+	}
+	var itemID int
+	for selDB.Next(){
+		err = selDB.Scan(&itemID)
+		if err != nil {
+			panic(err.Error())
+		}
+	}
+	return string(itemID)
+}
