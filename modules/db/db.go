@@ -9,7 +9,7 @@ import (
 	// "github.com/go-arun/fishrider/modules/session"
 )
 //Dbug enable this to ON debug mode , is no way realed to database module
-var Dbug = false
+var Dbug = true
 //Connection .. to refer in all modules
 var Connection *sql.DB
 

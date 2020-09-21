@@ -140,19 +140,14 @@ func adminPanelPost(c *gin.Context){
 		populateCategoryItems(c)
 	}else{
 		fmt.Println("No Active Sessions found ")
-		c.Redirect(http.StatusMovedPermanently, "/admin") // redirecting to admin loging page
+		c.Redirect(http.StatusTemporaryRedirect, "/admin") // redirecting to admin loging page
 		c.Abort()
-		// c.HTML(
-		// 	http.StatusOK,
-		// 	"admin_login.html",
-		// 	gin.H{"title": "Admin Login"},
-		// )
 	}
  }
 
  func logoutGet(c *gin.Context){
 	session.RemoveSessionIDFromDB(c)
-	c.Redirect(http.StatusMovedPermanently, "/admin") // redirecting to admin loging page
+	c.Redirect(http.StatusTemporaryRedirect, "/admin") // redirecting to admin loging page
 	c.Abort()
  }
 func main(){

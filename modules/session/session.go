@@ -9,7 +9,6 @@ import (
 	"github.com/go-arun/fishrider/modules/db"
 	"github.com/gin-gonic/gin"
 
-
 )
 
 //GenerateNewSessionID ... generating New UUID 
@@ -40,6 +39,7 @@ insForm.Exec(sessID,userName)
 }
 //RemoveSessionIDFromDB ...
 func RemoveSessionIDFromDB(c *gin.Context) {
+	if db.Dbug { fmt.Println("Removing Session Id from DB and Browsser ...")}
 	sessionCookie,_ := c.Cookie ("admin_session_cookie")
 
 	insForm, err := db.Connection.Prepare("UPDATE admin_master SET admin_sesid='' WHERE admin_sesid = ?")
