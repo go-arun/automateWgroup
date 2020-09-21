@@ -100,11 +100,14 @@ func adminGet( c *gin.Context){
 		populateCategoryItems(c)
 	}else{
 		fmt.Println("No Active Sessions found ")
+		// c.HTML(http.StatusOK, "admin_login.html", []string{"a", "b", "c"})
 		c.HTML(
 			http.StatusOK,
 			"admin_login.html",
-			gin.H{"title": "Admin Login"},
-		)
+			gin.H{"title": "Admin Login",
+				  "diplay": "none",
+				},
+			)
 	}
 }
 func adminPost( c *gin.Context){
@@ -117,6 +120,14 @@ func adminPost( c *gin.Context){
 		 //SetNewSessionID
 		session.SetSessionCookie(c,name,"admin_session_cookie")
 		populateCategoryItems(c)
+	 }else{
+		c.HTML(
+			http.StatusOK,
+			"admin_login.html",
+			gin.H{"title": "Admin Login",
+				  "diplay": "block",
+				},
+			)
 	 }
 
 }
