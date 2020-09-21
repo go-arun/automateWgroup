@@ -26,6 +26,8 @@ func adjStock(c *gin.Context){
 		 panic(err.Error())
  	}
 	 updForm.Exec(actualStock,itemID)
+	//  c.Redirect(http.StatusTemporaryRedirect, "/admin_panel") // redirecting to admin loging page
+	//  c.Abort()
 	 c.HTML(
 		http.StatusOK,
 		"admin_panel.html",
@@ -131,8 +133,10 @@ func adminGet( c *gin.Context){
 func adminPost( c *gin.Context){
 	if db.Dbug{fmt.Println("dm-Inside func-adminPost")}
 	c.Request.ParseForm()
-	name := c.Request.PostForm["uname"][0]
-	pwd  := c.Request.PostForm["pwd"][0]
+	name := c.PostForm("uname")
+	pwd  := c.PostForm("pwd")
+	// name := c.Request.PostForm["uname"][0]
+	// pwd  := c.Request.PostForm["pwd"][0]
 
 	 if (session.UsrCredentialsVerify(name,pwd)){//return value 'true' means creadentias are matching ..
 		 //SetNewSessionID
