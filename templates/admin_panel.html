@@ -50,7 +50,7 @@
                     <input class="m-1" type="submit" value="Update" />
                 </div>
                 <div id="stock_adj" style="display: none;">
-                  <select  onchange="changeImageToo()" name="fishname" id="fishname" style="width: 192px;">
+                  <select  onchange="change_ImageToo()" name="fish_name" id="fish_name" style="width: 192px;">
                     <option value="SEL" >Select Fish</option>
                     {{ range .FishCatagories }}
                       <option value="{{.ID}}">{{.Name}}[{{.Stock}} {{.Unit}}]</option>
@@ -58,7 +58,7 @@
                   </select>
                   <input id="adj_qty" class="m-1" type="text" placeholder="Enter Quandity" name="adj_qty">
                   <div class="card"></div>
-                  <img id="fishImg" class="m-1" src="http://172.17.56.34:8080/file/SEL.jpg" style="border: 1px solid #555;" alt="Fish Pic" width="190" height="150"><br>
+                  <img id="fish_Img" class="m-1" src="http://172.17.56.34:8080/file/SEL.jpg" style="border: 1px solid #555;" alt="Fish Pic" width="190" height="150"><br>
                   <input class="m-1" type="submit" value="Update" />
               </div>                
               </form>
@@ -103,7 +103,10 @@
       function changeImageToo(){
         var fishid = document.getElementById("fishname").value
         document.getElementById("fishImg").src = "http://172.17.56.34:8080/file/" + fishid + ".jpg"
-
+      }
+      function change_ImageToo(){
+        var fishid = document.getElementById("fish_name").value
+        document.getElementById("fish_Img").src = "http://172.17.56.34:8080/file/" + fishid + ".jpg"
       }
       function toggleCtrls(clicked_id) {
         document.getElementById("optedto").value = clicked_id

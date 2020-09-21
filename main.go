@@ -17,6 +17,22 @@ type Item struct {
 	ID,Stock int
 	Name,Unit string
 }
+func adjStock(c *gin.Context){
+	itemID  := c.PostForm("fish_name")
+	actualStock  := c.PostForm("adj_qty")
+	strSQL := "UPDATE item_master SET item_stock = ? WHERE item_id = ?"
+	updForm, err := db.Connection.Prepare(strSQL)
+	if err != nil {
+		 panic(err.Error())
+ 	}
+	 updForm.Exec(actualStock,itemID)
+	 c.HTML(
+		http.StatusOK,
+		"admin_panel.html",
+		gin.H{"title": "Admin Panel"},
+	)
+
+}
 func updateStock(c *gin.Context){
 	itemID  := c.PostForm("fishname")
 	pPrice  := c.PostForm("purch_price")
@@ -143,6 +159,7 @@ func adminPanelPost(c *gin.Context){
 	case "purchase":
 		updateStock(c)
 	case "stockadj":
+		adjStock(c)
 
 	}
 	
