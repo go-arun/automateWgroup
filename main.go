@@ -14,7 +14,7 @@ import (
 )
 //Item ... to store item details while retriving from DB
 type Item struct {
-	ID int
+	ID,Stock int
 	Name,Unit string
 }
 func updateStock(c *gin.Context){
@@ -36,7 +36,7 @@ func updateStock(c *gin.Context){
 	)
 }
 func populateCategoryItems(c *gin.Context){
-	selDB, err := db.Connection.Query("SELECT item_id,item_desc,item_unit FROM item_master")
+	selDB, err := db.Connection.Query("SELECT item_id,item_desc,item_unit,item_stock FROM item_master")
 	if err !=nil {
 			panic(err.Error())
 	}
@@ -48,13 +48,15 @@ func populateCategoryItems(c *gin.Context){
 		var id int
 		var name string
 		var unit string
-		err = selDB.Scan(&id,&name,&unit)
+		var stk int
+		err = selDB.Scan(&id,&name,&unit,&stk)
 		if err != nil {
 			panic(err.Error())
 		}
 		item.ID = id
 		item.Name = name
 		item.Unit = unit
+		item.Stock = stk
 		itemCollection = append(itemCollection,item)
 	}
 	c.HTML(											
@@ -140,6 +142,8 @@ func adminPanelPost(c *gin.Context){
 		addNewCatagory(c)
 	case "purchase":
 		updateStock(c)
+	case "stockadj":
+
 	}
 	
  }
