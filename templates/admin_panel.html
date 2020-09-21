@@ -96,6 +96,14 @@
                   return false
               }
               alert("Details Updated Successfully!!")
+        }else if(operation == "stockadj"){
+          var stockAdjto = document.getElementById("adj_qty").value
+          var selectedFish = document.getElementById("fish_name").value
+          if (selectedFish=="SEL" || stockAdjto =="" ){
+                  alert("Please Provide all Imputs !!")
+                  return false
+              }
+              alert("Details Updated Successfully!!")
         }
 
       }
