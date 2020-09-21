@@ -20,7 +20,7 @@
               <div id="stockadj" onclick="toggleCtrls(this.id)" class="admn_buttons btn btn-primary m-1">Stock Adjust</div><br>
               <div id="category" onclick="toggleCtrls(this.id)" class="admn_buttons btn btn-primary m-1">New Fish Catgory</div><br>
               <div id="reports" class="admn_buttons btn btn-primary m-1">Reports</div><br>
-              <div id="logout" onclick="location.href='http://172.17.196.75:8080/logout';" class="admn_buttons btn btn-primary m-1">Logout</div><br>
+              <div id="logout" onclick="location.href='http://172.17.56.34:8080/logout';" class="admn_buttons btn btn-primary m-1">Logout</div><br>
           </div>
             <div class="lg-12 " style="border: 0px;"><!--Main DIV rightSide-->
               <form id="admin_form" action="/admin_panel" method="post" enctype="multipart/form-data" onsubmit="return verify_inputs()">
@@ -46,7 +46,7 @@
                     <input id="s_price" class="m-1" type="text" placeholder="Selling Price(Rs)" name="selling_price"><br>
                     <input id="p_qty" class="m-1" type="text" placeholder="Purchasing Quandity" name="purch_qty">
                     <div class="card"></div>
-                    <img id="fishImg" class="m-1" src="http://172.17.196.75:8080/file/SEL.jpg" style="border: 1px solid #555;" alt="Fish Pic" width="190" height="150"><br>
+                    <img id="fishImg" class="m-1" src="http://172.17.56.34:8080/file/SEL.jpg" style="border: 1px solid #555;" alt="Fish Pic" width="190" height="150"><br>
                     <input class="m-1" type="submit" value="Update" />
                 </div>
                 <div id="stock_adj" style="display: none;">
@@ -58,7 +58,7 @@
                   </select>
                   <input id="adj_qty" class="m-1" type="text" placeholder="Enter Quandity" name="adj_qty">
                   <div class="card"></div>
-                  <img id="fishImg" class="m-1" src="http://172.17.196.75:8080/file/SEL.jpg" style="border: 1px solid #555;" alt="Fish Pic" width="190" height="150"><br>
+                  <img id="fishImg" class="m-1" src="http://172.17.56.34:8080/file/SEL.jpg" style="border: 1px solid #555;" alt="Fish Pic" width="190" height="150"><br>
                   <input class="m-1" type="submit" value="Update" />
               </div>                
               </form>
@@ -102,7 +102,7 @@
       //to change image based on select tag
       function changeImageToo(){
         var fishid = document.getElementById("fishname").value
-        document.getElementById("fishImg").src = "http://172.17.196.75:8080/file/" + fishid + ".jpg"
+        document.getElementById("fishImg").src = "http://172.17.56.34:8080/file/" + fishid + ".jpg"
 
       }
       function toggleCtrls(clicked_id) {
