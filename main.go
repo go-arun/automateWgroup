@@ -196,6 +196,8 @@ func main(){
 	router.GET("/admin_panel", adminPanelGet)
 	router.GET("/logout", logoutGet)
 	router.StaticFS("/file", http.Dir("pics"))
+	x,y := session.HashPassword("12345")
+	fmt.Println("Hash--->",x,",",y)
 	router.Run()
 }
 
