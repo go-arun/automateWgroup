@@ -18,6 +18,7 @@ type Item struct {
 	ID, Stock  int
 	Name, Unit string
 	Rate       float64
+	IsUnitKg   bool // will display numbers/KG based on this, while listing items in user_index.html page
 }
 
 func adjStock(c *gin.Context) {
@@ -66,6 +67,7 @@ func populateCategoryItems(c *gin.Context) {
 	itemCollection := []Item{}
 
 	for selDB.Next() {
+		//item.IsUnitKg = false // just resetting back to fales ( TBD : make sure this is necessary)
 		var id int
 		var name string
 		var unit string
@@ -78,6 +80,7 @@ func populateCategoryItems(c *gin.Context) {
 		item.Name = name
 		item.Unit = unit
 		item.Stock = stk
+
 		itemCollection = append(itemCollection, item)
 	}
 	c.HTML(
@@ -211,9 +214,12 @@ func userIndexGet(c *gin.Context) {
 		var unit string
 		var stk int
 		var price float64
-		err = selDB.Scan(&id, &name, &unit, &stk,&price)
+		err = selDB.Scan(&id, &name, &unit, &stk, &price)
 		if err != nil {
 			panic(err.Error())
+		}
+		if unit == "Kg" {
+			item.IsUnitKg = true
 		}
 		item.ID = id
 		item.Name = name

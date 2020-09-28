@@ -52,8 +52,13 @@
         <div class="col border-top border-bottom border-top border-primary">
           <h4>{{ .Name}}</h4>
           <h4>Rs.{{ .Rate}}/{{.Unit}}</h4>
+           <h4> inStock:{{.Stock}}</h4>
           <select cname="f_qty" id="f_qty" style="width: 192px;">
+            {{ if .IsUnitKg }}
+              <option value="Qty" >Select KG</option>
+            {{ else }}
             <option value="Qty" >Select Qty</option>
+            {{ end }}
           </select>
         </div>        
         <div class="col border-left  border-primary">
