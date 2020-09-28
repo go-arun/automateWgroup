@@ -67,7 +67,6 @@ func populateCategoryItems(c *gin.Context) {
 	itemCollection := []Item{}
 
 	for selDB.Next() {
-		//item.IsUnitKg = false // just resetting back to fales ( TBD : make sure this is necessary)
 		var id int
 		var name string
 		var unit string
@@ -209,6 +208,7 @@ func userIndexGet(c *gin.Context) {
 	itemCollection := []Item{}
 
 	for selDB.Next() {
+		item.IsUnitKg = false // just resetting back to fales ( TBD : make sure this is necessary)
 		var id int
 		var name string
 		var unit string
