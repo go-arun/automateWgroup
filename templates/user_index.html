@@ -9,8 +9,8 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <title>{{.title}}</title>
   </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <body  style="background-color: rgb(192, 215, 228); padding-top: 70px">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <a class="navbar-brand" href="#">
             <!-- <img id="fishImg" class="m-1" src="https://img1.wsimg.com/isteam/ip/6347ba1a-900e-4808-9f1a-927863e69311/Screenshot_20200114_152535_com.whatsapp-0001.png/:/cr=t:0%25,l:0%25,w:100%25,h:100%25/rs=h:750,cg:true" style="border: 1px solid #555;" alt="Fish Pic" width="190" height="150"><br> -->
             <!-- <img id="fishImg" class="m-1" src="http://debian:8080/file/SEL.jpg" style="border: 1px solid #555;" alt="Fish Pic" width="190" height="150"><br> -->
@@ -43,53 +43,24 @@
         </div>
     </nav>
       <!--NavBarEnd  -->
-    <div class="container bg-info">
+    <div class="container ">
+      {{ range .AvailableSock}}
       <div class="row" style="height: 175px;"> <!-- Row1-->
-        <div class="col-sm border-left border-top border-bottom border-primary">
-          <img id="fish_Img" class="m-1" src="http://debian:8080/file/SEL.jpg" style="border: 1px solid #555;" alt="Fish Pic" width="190" height="150">
+        <div class="col border-left border-top border-bottom border-primary">
+          <img id="{{ .ID }}" class="m-1" src="http://debian:8080/file/{{.ID}}.jpg" style="border: 1px solid #555;" alt="Fish Pic" width="190" height="150">
         </div>
-        <div class="col-sm border-top border-bottom border-top border-primary">
-          <p>Descriptiion</p>
-          <h4>Descriptiion</h4>
+        <div class="col border-top border-bottom border-top border-primary">
+          <h4>{{ .Name}}</h4>
+          <h4>Rs.{{ .Rate}}/{{.Unit}}</h4>
           <select cname="f_qty" id="f_qty" style="width: 192px;">
             <option value="Qty" >Select Qty</option>
           </select>
         </div>        
-        <div class="col-sm border-left border-top border-primary">
-                <H3>Announcements/Offers</H3>
+        <div class="col border-left  border-primary">
         </div>  
       </div>
-      <div class="row" style="height: 175px;"> <!-- Row2-->
-        <div class="col-sm border-left border-top border-bottom border-primary">
-          <img id="fish_Img" class="m-1" src="http://debian:8080/file/SEL.jpg" style="border: 1px solid #555;" alt="Fish Pic" width="190" height="150">
-        </div>
-        <div class="col-sm border-top border-bottom border-primary">
-          <p>Descriptiion</p>
-          <h4>Descriptiion</h4>
-          <select cname="f_qty" id="f_qty" style="width: 192px;">
-            <option value="Qty" >Select Qty</option>
-          </select>
-        </div>        
-        <div class="col-sm border-left  border-primary">
-                <!-- <H3>Announcements/Offers</H3> -->
-        </div>  
-      </div>
-      <div class="row" style="height: 175px;"> <!-- Row3-->
-        <div class="col-sm border-left">
-          <img id="fish_Img" class="m-1" src="http://debian:8080/file/SEL.jpg" style="border: 1px solid #555;" alt="Fish Pic" width="190" height="150">
-        </div>
-        <div class="col-sm border-top border-primary">
-          <p>Descriptiion</p>
-          <h4>Descriptiion</h4>
-          <select cname="f_qty" id="f_qty" style="width: 192px;">
-            <option value="Qty" >Select Qty</option>
-          </select>
-        </div>        
-        <div class="col-sm border-left  border-bottom border-primary">
-                <!-- <H3>Announcements/Offers</H3> -->
-        </div>  
-      </div>      
-          
+      {{ end }}
+      <div class="btn bg-light float-right mb-5 ">Continue</div>
     </div>
 
     <!-- Optional JavaScript -->
