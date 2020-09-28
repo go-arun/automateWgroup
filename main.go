@@ -186,9 +186,20 @@ func adminPanelPost(c *gin.Context){
 	c.Redirect(http.StatusTemporaryRedirect, "/admin") // redirecting to admin loging page
 	c.Abort()
  }
+func userIndexGet(c *gin.Context){
+	c.HTML(
+		http.StatusOK,
+		"user_index.html",
+		gin.H{"title": "Fish Rider Online Shopping",
+			  "diplay": "block",
+			},
+		)
+
+}
 func main(){
 	db.Connect() //db Connection 
 	router := gin.Default()
+	//admin routes
 	router.LoadHTMLGlob("templates/*")
 	router.GET("/admin", adminGet)
 	router.POST("/admin", adminPost)
@@ -196,8 +207,8 @@ func main(){
 	router.GET("/admin_panel", adminPanelGet)
 	router.GET("/logout", logoutGet)
 	router.StaticFS("/file", http.Dir("pics"))
-	x,y := session.HashPassword("12345")
-	fmt.Println("Hash--->",x,",",y)
+	//user Routes
+	router.GET("/",userIndexGet)
 	router.Run()
 }
 
