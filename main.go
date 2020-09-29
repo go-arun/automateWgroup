@@ -197,7 +197,7 @@ func adminPanelGet(c *gin.Context) {
 }
 
 func logoutGet(c *gin.Context) {
-	session.RemoveSessionIDFromDB(c)
+	session.RemoveAdminSessionIDFromDB(c)
 	c.Redirect(http.StatusTemporaryRedirect, "/admin") // redirecting to admin loging page
 	c.Abort()
 }
@@ -274,6 +274,13 @@ func userIndexPost(c *gin.Context) {
 	IsUsrSectionActive := session.SessinStatus(c, "user_session_cookie")
 	if IsUsrSectionActive {
 		//Move to Orders Page TBD
+		c.HTML(
+			http.StatusOK,
+			"orders.html",
+			gin.H{"title": "User Login",
+				"diplay": "none", // TBD make use of this logic to diplay error
+			},
+		)
 		fmt.Println("Session is active for this user")
 	} else {
 		fmt.Println("No Active USR Sessions found ")
@@ -308,7 +315,7 @@ func userLoginGet(c *gin.Context) {
 
 }
 func userLoginPost(c *gin.Context) {
-	GlobalMobNo,_ = strconv.Atoi(c.PostForm("mobile_no"))
+	GlobalMobNo, _ = strconv.Atoi(c.PostForm("mobile_no"))
 	c.HTML(
 		http.StatusOK,
 		"user_otp_verification.html",
@@ -317,10 +324,23 @@ func userLoginPost(c *gin.Context) {
 		},
 	)
 }
-func userOtpVerifyGet(c *gin.Context) {
+func userOtpVerifyPost(c *gin.Context) {
 	//TBD SMS API , Now blindly accepting any code
 	session.SetUserSessionCookie(c, GlobalMobNo, "user_session_cookie")
+	//User Logged so Move to Orders Page
+	c.HTML(
+		http.StatusOK,
+		"orders.html",
+		gin.H{"title": "User Login",
+			"diplay": "none", // TBD make use of this logic to diplay error
+		},
+	)
 
+}
+func userLogoutGet(c *gin.Context){
+	session.RemoveUserSessionIDFromDB(c)
+	c.Redirect(http.StatusTemporaryRedirect, "/") // redirecting to item listing page
+	c.Abort()
 
 }
 func main() {
@@ -341,6 +361,7 @@ func main() {
 	router.POST("/signup", userSignupPost)
 	router.GET("/userlogin", userLoginGet)
 	router.POST("/userlogin", userLoginPost)
-	router.POST("/userotpverify", userOtpVerifyGet)
+	router.POST("/userotpverify", userOtpVerifyPost)
+	router.GET("/usrlogout", userLogoutGet)
 	router.Run()
 }

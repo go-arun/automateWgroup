@@ -51,8 +51,8 @@ func AddUserSessionIDToDB(mobNo int) string {
 	return sessID
 }
 
-//RemoveSessionIDFromDB ...
-func RemoveSessionIDFromDB(c *gin.Context) {
+//RemoveAdminSessionIDFromDB ...
+func RemoveAdminSessionIDFromDB(c *gin.Context) {
 	if db.Dbug {
 		fmt.Println("Removing Session Id from DB and Browsser ...")
 	}
@@ -65,6 +65,26 @@ func RemoveSessionIDFromDB(c *gin.Context) {
 	insForm.Exec(sessionCookie)
 	// Deleting cookie
 	c.SetCookie("admin_session_cookie",
+		"",
+		-1, // delete now !!
+		"/",
+		"", false, false,
+	)
+}
+//RemoveUserSessionIDFromDB ...
+func RemoveUserSessionIDFromDB(c *gin.Context) {
+	if db.Dbug {
+		fmt.Println("Removing Session Id from DB and Browsser ...")
+	}
+	sessionCookie, _ := c.Cookie("user_session_cookie")
+
+	insForm, err := db.Connection.Prepare("UPDATE cust_master SET cust_sesid='' WHERE cust_sesid = ?")
+	if err != nil {
+		panic(err.Error())
+	}
+	insForm.Exec(sessionCookie)
+	// Deleting cookie
+	c.SetCookie("user_session_cookie",
 		"",
 		-1, // delete now !!
 		"/",
