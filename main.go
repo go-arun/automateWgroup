@@ -235,6 +235,22 @@ func userIndexGet(c *gin.Context) {
 		})
 
 }
+func userSignupGet(c *gin.Context){
+	c.HTML(
+		http.StatusOK,
+		"user_signup.html", gin.H{
+			"title": "User Registration",
+		})
+
+}
+func userSignupPost(c *gin.Context){
+	c.HTML(
+		http.StatusOK,
+		"user_signup.html", gin.H{
+			"title": "User Registration",
+		})
+
+}
 func main() {
 	db.Connect() //db Connection
 	router := gin.Default()
@@ -248,5 +264,7 @@ func main() {
 	router.StaticFS("/file", http.Dir("pics"))
 	//user Routes
 	router.GET("/", userIndexGet)
+	router.GET("/signup", userSignupGet)
+	router.POST("/signup", userSignupPost)
 	router.Run()
 }

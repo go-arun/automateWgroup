@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <title>{{.title}}</title>
+  </head>
+  <body>
+    <div class="alert alert-warning alert-dismissible fade show" role="alert" style="display: {{.diplay}};">
+        <strong>Oh!!!!</strong> You have entered an invalid username or password.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    <div class="container mt-5 ">
+            <div class="jumbotron  mx-auto p-5" style="width: 40%;">
+                <h4 class="p-1">Create New Account </h4>
+                <form  class="form-block pb-3" method="POST" onsubmit="return verify_inputs()">
+                    <!-- FontAwesome -->
+
+                                <input name="mobile" id="mobile" type="text" class="form-control p-1" placeholder="Mobile Number">
+                                <input name="cust_name" id="cust_name" type="text" class="form-control p-1" placeholder="Your Name">
+                                <input name="house_name" id="house_name" type="text" class="form-control p-1" placeholder="House Name/Number">
+                                <input name="street_name" id="street_name" type="text" class="form-control p-1" placeholder="Street Name">
+                                <input name="lmark_name" id="lmark_name" type="text" class="form-control p-1" placeholder="Landmark Eg:Near Railway Gate">
+
+                    <button type="submit" class="btn btn-primary mb-4 float-right">Submit</button>
+                </form>
+            </div>
+    </div>
+    <style>
+    input[type=text] {
+         max-width: 250px;
+    }
+
+    </style>
+    <!--MyJava-->
+    <script>
+        function  verify_inputs(){
+            var mob = document.getElementById("mobile").value;
+            var cust_name = document.getElementById("cust_name").value;
+            var house_name = document.getElementById("house_name").value;
+            var street_name = document.getElementById("street_name").value;
+            if (mob=="" || cust_name =="" || house_name=="" || street_name=="" ){
+                 alert("All fields are mandatory Except Landmark!!")
+                return false
+            }
+
+        }
+    </script>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+  </body>
+</html>
