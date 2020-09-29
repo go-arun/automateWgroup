@@ -19,7 +19,7 @@
             <div class="jumbotron  mx-auto" style="width: 60%;">
               <a class="float-right m-1" href="http://debian:8080/signup">Sign Up</a>
                 <!-- <form class="form-block"> -->
-                <form  class="form-block pb-3" method="POST" onsubmit="return verify_inputs()">
+                <form  class="form-block pb-3" action="/userlogin" method="POST" onsubmit="return verify_inputs()">
                     <h4>User Login</h4>
                     <!-- FontAwesome -->
                     <link 
@@ -29,7 +29,7 @@
                     <div class="container" style="width: 60%;" >
                         <div class="form-group">
                             <div class="input-group">
-                                <div class="input-group-prepend">
+                                <div class="input-group-prepend">  
                                     <span class="input-group-text">
                                     <i class="fas fa-user"></i>
                                     </span>
@@ -45,13 +45,9 @@
 
     <!--MyJava-->
     <script>
-        function  verify_inputs(){
-            var uname = document.getElementById("uname").value;
-            var pwd = document.getElementById("pwd").value;
-            if (mobile_no==""){
-                alert("Please make sure Username and Password Provided !!")
-                return false
-            }
+        function  verify_inputs(){ //TBD filed required allready given ,SO do another error check, like verify mobile number , 
+          
+
         }
     </script>
     <!-- Optional JavaScript -->

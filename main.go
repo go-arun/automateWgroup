@@ -6,12 +6,16 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-arun/fishrider/modules/db"
 	"github.com/go-arun/fishrider/modules/fileoperation"
 	"github.com/go-arun/fishrider/modules/session"
 )
+
+//GlobalMobNo ... temporarly storing user mobile no here while login
+var GlobalMobNo int
 
 //Item ... to store item details while retriving from DB
 type Item struct {
@@ -151,7 +155,7 @@ func adminPost(c *gin.Context) {
 
 	if session.UsrCredentialsVerify(name, pwd) { //return value 'true' means creadentias are matching ..
 		//SetNewSessionID
-		session.SetSessionCookie(c, name, "admin_session_cookie")
+		session.SetAdminSessionCookie(c, name, "admin_session_cookie")
 		populateCategoryItems(c)
 	} else {
 		c.HTML(
@@ -235,7 +239,7 @@ func userIndexGet(c *gin.Context) {
 		})
 
 }
-func userSignupGet(c *gin.Context){
+func userSignupGet(c *gin.Context) {
 	c.HTML(
 		http.StatusOK,
 		"user_signup.html", gin.H{
@@ -243,19 +247,19 @@ func userSignupGet(c *gin.Context){
 		})
 
 }
-func userSignupPost(c *gin.Context){
-	mob  :=  c.PostForm("mobile")
-	name :=  c.PostForm("cust_name")
-	houseName :=  c.PostForm("house_name")
-	street :=  c.PostForm("street_name")
-	landMark :=  c.PostForm("lmark_name")
-	fmt.Println(mob,name,houseName,street,landMark)
-	err := db.AddNewCustomer(mob,name,houseName,street,landMark)
-	if err != nil{
-		fmt.Println("ERROR inserting new user" )
+func userSignupPost(c *gin.Context) {
+	mob := c.PostForm("mobile")
+	name := c.PostForm("cust_name")
+	houseName := c.PostForm("house_name")
+	street := c.PostForm("street_name")
+	landMark := c.PostForm("lmark_name")
+	fmt.Println(mob, name, houseName, street, landMark)
+	err := db.AddNewCustomer(mob, name, houseName, street, landMark)
+	if err != nil {
+		fmt.Println("ERROR inserting new user")
 	}
-	
-	//After signup continue to Order Page TBD Change below code 
+
+	//After signup continue to Order Page TBD Change below code
 	c.HTML(
 		http.StatusOK,
 		"user_signup.html", gin.H{
@@ -263,8 +267,28 @@ func userSignupPost(c *gin.Context){
 		})
 
 }
+
 //items selected and moving to Orders page
-func userIndexPost(c *gin.Context){
+func userIndexPost(c *gin.Context) {
+	//Checking for any active sessions
+	IsUsrSectionActive := session.SessinStatus(c, "user_session_cookie")
+	if IsUsrSectionActive {
+		//Move to Orders Page TBD
+	} else {
+		fmt.Println("No Active USR Sessions found ")
+		//Login User
+		c.HTML(
+			http.StatusOK,
+			"user_login.html",
+			gin.H{"title": "User Login",
+				"diplay": "none", // TBD make use of this logic to diplay error
+			},
+		)
+	}
+
+}
+
+func userLoginGet(c *gin.Context) {
 	//Checking for any active sessions
 	IsUsrSectionActive := session.SessinStatus(c, "user_session_cookie")
 	if IsUsrSectionActive {
@@ -282,23 +306,20 @@ func userIndexPost(c *gin.Context){
 	}
 
 }
+func userLoginPost(c *gin.Context) {
+	GlobalMobNo,_ = strconv.Atoi(c.PostForm("mobile_no"))
+	c.HTML(
+		http.StatusOK,
+		"user_otp_verification.html",
+		gin.H{"title": "OTP Verification",
+			"diplay": "none", // TBD make use of this logic to diplay error
+		},
+	)
+}
+func userOtpVerifyGet(c *gin.Context) {
+	//TBD SMS API , Now blindly accepting any code
+	session.SetUserSessionCookie(c, GlobalMobNo, "user_session_cookie")
 
-func userLoginGet( c *gin.Context){
-		//Checking for any active sessions
-		IsUsrSectionActive := session.SessinStatus(c, "user_session_cookie")
-		if IsUsrSectionActive {
-			//Move to Orders Page TBD
-		} else {
-			fmt.Println("No Active USR Sessions found ")
-			// c.HTML(http.StatusOK, "admin_login.html", []string{"a", "b", "c"})
-			c.HTML(
-				http.StatusOK,
-				"user_login.html",
-				gin.H{"title": "User Login",
-					"diplay": "none", // TBD make use of this logic to diplay error
-				},
-			)
-		}
 
 }
 func main() {
@@ -318,5 +339,7 @@ func main() {
 	router.GET("/signup", userSignupGet)
 	router.POST("/signup", userSignupPost)
 	router.GET("/userlogin", userLoginGet)
+	router.POST("/userlogin", userLoginPost)
+	router.POST("/userotpverify", userOtpVerifyGet)
 	router.Run()
 }

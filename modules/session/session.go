@@ -25,8 +25,8 @@ func GenerateNewSessionID() (string, error) {
 	return fmt.Sprintf("%x-%x-%x-%x-%x", uuid[0:4], uuid[4:6], uuid[6:8], uuid[8:10], uuid[10:]), nil
 }
 
-//AddSessionIDToDB ... to coresponnding users's field in db
-func AddSessionIDToDB(userName string) string {
+//AddAdminSessionIDToDB ... to coresponnding users's field in db
+func AddAdminSessionIDToDB(userName string) string {
 	sessID, _ := GenerateNewSessionID()
 
 	insForm, err := db.Connection.Prepare("UPDATE admin_master SET admin_sesid=? WHERE admin_uname= ?")
@@ -35,6 +35,18 @@ func AddSessionIDToDB(userName string) string {
 	}
 
 	insForm.Exec(sessID, userName)
+	return sessID
+}
+//AddUserSessionIDToDB ...
+func AddUserSessionIDToDB(mobNo int) string {
+	sessID, _ := GenerateNewSessionID()
+
+	insForm, err := db.Connection.Prepare("UPDATE cust_master SET cust_sesid=? WHERE cust_mob= ?")
+	if err != nil {
+		panic(err.Error())
+	}
+
+	insForm.Exec(sessID, mobNo)
 	return sessID
 }
 
@@ -107,10 +119,22 @@ func SessinStatus(c *gin.Context, cookieName string) (sesStatus bool) {
 	return sesStatus //
 }
 
-//SetSessionCookie ...
-func SetSessionCookie(c *gin.Context, adminUserName, sessionCookieName string) {
+//SetAdminSessionCookie ...
+func SetAdminSessionCookie(c *gin.Context, adminUserName, sessionCookieName string) {
 
-	sessionID := AddSessionIDToDB(adminUserName) // Generate a new SSID and insert to DB
+	sessionID := AddAdminSessionIDToDB(adminUserName) // Generate a new SSID and insert to DB
+	c.SetCookie(sessionCookieName,
+		sessionID,
+		3600*12, // 12hrs
+		"/",
+		"", false, false, //domain excluded
+	)
+}
+
+//SetUserSessionCookie ...
+func SetUserSessionCookie(c *gin.Context, mobNumber int, sessionCookieName string) {
+
+	sessionID := AddUserSessionIDToDB(mobNumber) // Generate a new SSID and insert to DB
 	c.SetCookie(sessionCookieName,
 		sessionID,
 		3600*12, // 12hrs
