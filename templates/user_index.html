@@ -44,68 +44,71 @@
     </nav>
       <!--NavBarEnd  -->
     <div class="container ">
-      {{ range .AvailableSock}}
-      <div class="row" style="height: 175px;"> <!-- Row1-->
-        <div class="col border-left border-top border-bottom border-primary">
-          <img id="{{ .ID }}" class="m-1" src="http://debian:8080/file/{{.ID}}.jpg" style="border: 1px solid #555;" alt="Fish Pic" width="190" height="150">
+      <form id="itmlist_form" action="/" method="post" enctype="multipart/form-data" onsubmit="return verify_inputs()">
+        {{ range .AvailableSock}}
+        <div class="row" style="height: 175px;"> <!-- Row1-->
+          <div class="col border-left border-top border-bottom border-primary">
+            <img id="{{ .ID }}" class="m-1" src="http://debian:8080/file/{{.ID}}.jpg" style="border: 1px solid #555;" alt="Fish Pic" width="190" height="150">
+          </div>
+          <div class="col border-top border-bottom border-top border-primary">
+            <h4>{{ .Name}}</h4>
+            <h4>Rs.{{ .Rate}}/{{.Unit}}</h4>
+             <h4> inStock:{{.Stock}}</h4>
+            <select cname="f_qty" id="f_qty" style="width: 100px;">
+              <!-- <select cname="f_qty" id="f_qty" style="width: 192px;"> -->
+              {{ if .IsUnitKg }}
+                <option value="Qty" >Select KG</option>
+                <option value="1">1</option>
+                <option value="1.5">1.5</option>
+                <option value="2">2</option>
+                <option value="2.5">2.5</option>
+                <option value="3">3</option>
+                <option value="3.5">3.5</option>
+                <option value="4">4</option>
+                <option value="4.5">4.5</option>
+                <option value="5">5</option>
+                <option value="5.5">5.5</option>
+                <option value="6">6</option>
+                <option value="6.5">6.5</option>
+                <option value="7">7</option>
+                <option value="7.5">7.5</option>
+                <option value="8">8</option>
+                <option value="8.5">8.5</option>
+                <option value="9">9</option>
+                <option value="9.5">9.5</option>
+                <option value="10">10</option>
+              {{ else }}
+                <option value="Qty" >Select Qty</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+                <option value="17">17</option>
+                <option value="18">18</option>
+                <option value="19">19</option>
+                <option value="20">20</option>
+              {{ end }}
+            </select>
+          </div>        
+          <div class="col border-left  border-primary">
+          </div>  
         </div>
-        <div class="col border-top border-bottom border-top border-primary">
-          <h4>{{ .Name}}</h4>
-          <h4>Rs.{{ .Rate}}/{{.Unit}}</h4>
-           <h4> inStock:{{.Stock}}</h4>
-          <select cname="f_qty" id="f_qty" style="width: 100px;">
-            <!-- <select cname="f_qty" id="f_qty" style="width: 192px;"> -->
-            {{ if .IsUnitKg }}
-              <option value="Qty" >Select KG</option>
-              <option value="1">1</option>
-              <option value="1.5">1.5</option>
-              <option value="2">2</option>
-              <option value="2.5">2.5</option>
-              <option value="3">3</option>
-              <option value="3.5">3.5</option>
-              <option value="4">4</option>
-              <option value="4.5">4.5</option>
-              <option value="5">5</option>
-              <option value="5.5">5.5</option>
-              <option value="6">6</option>
-              <option value="6.5">6.5</option>
-              <option value="7">7</option>
-              <option value="7.5">7.5</option>
-              <option value="8">8</option>
-              <option value="8.5">8.5</option>
-              <option value="9">9</option>
-              <option value="9.5">9.5</option>
-              <option value="10">10</option>
-            {{ else }}
-              <option value="Qty" >Select Qty</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-              <option value="7">7</option>
-              <option value="8">8</option>
-              <option value="9">9</option>
-              <option value="10">10</option>
-              <option value="11">11</option>
-              <option value="12">12</option>
-              <option value="13">13</option>
-              <option value="14">14</option>
-              <option value="15">15</option>
-              <option value="16">16</option>
-              <option value="17">17</option>
-              <option value="18">18</option>
-              <option value="19">19</option>
-              <option value="20">20</option>
-            {{ end }}
-          </select>
-        </div>        
-        <div class="col border-left  border-primary">
-        </div>  
-      </div>
-      {{ end }}
-      <div class="btn bg-light float-right mb-5 ">Continue</div>
+        {{ end }}
+        <!-- <div type="submit" class="btn bg-light float-right mb-5 ">Continue</div> -->
+        <input class="btn bg-light float-right m-4" type="submit" value="Continue">
+      </form>
     </div>
 
     <!-- Optional JavaScript -->

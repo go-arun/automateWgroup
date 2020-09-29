@@ -244,11 +244,61 @@ func userSignupGet(c *gin.Context){
 
 }
 func userSignupPost(c *gin.Context){
+	mob  :=  c.PostForm("mobile")
+	name :=  c.PostForm("cust_name")
+	houseName :=  c.PostForm("house_name")
+	street :=  c.PostForm("street_name")
+	landMark :=  c.PostForm("lmark_name")
+	fmt.Println(mob,name,houseName,street,landMark)
+	err := db.AddNewCustomer(mob,name,houseName,street,landMark)
+	if err != nil{
+		fmt.Println("ERROR inserting new user" )
+	}
+	
+	//After signup continue to Order Page TBD Change below code 
 	c.HTML(
 		http.StatusOK,
 		"user_signup.html", gin.H{
 			"title": "User Registration",
 		})
+
+}
+//items selected and moving to Orders page
+func userIndexPost(c *gin.Context){
+	//Checking for any active sessions
+	IsUsrSectionActive := session.SessinStatus(c, "user_session_cookie")
+	if IsUsrSectionActive {
+		//Move to Orders Page TBD
+	} else {
+		fmt.Println("No Active USR Sessions found ")
+		// c.HTML(http.StatusOK, "admin_login.html", []string{"a", "b", "c"})
+		c.HTML(
+			http.StatusOK,
+			"user_login.html",
+			gin.H{"title": "User Login",
+				"diplay": "none", // TBD make use of this logic to diplay error
+			},
+		)
+	}
+
+}
+
+func userLoginGet( c *gin.Context){
+		//Checking for any active sessions
+		IsUsrSectionActive := session.SessinStatus(c, "user_session_cookie")
+		if IsUsrSectionActive {
+			//Move to Orders Page TBD
+		} else {
+			fmt.Println("No Active USR Sessions found ")
+			// c.HTML(http.StatusOK, "admin_login.html", []string{"a", "b", "c"})
+			c.HTML(
+				http.StatusOK,
+				"user_login.html",
+				gin.H{"title": "User Login",
+					"diplay": "none", // TBD make use of this logic to diplay error
+				},
+			)
+		}
 
 }
 func main() {
@@ -264,7 +314,9 @@ func main() {
 	router.StaticFS("/file", http.Dir("pics"))
 	//user Routes
 	router.GET("/", userIndexGet)
+	router.POST("/", userIndexPost)
 	router.GET("/signup", userSignupGet)
 	router.POST("/signup", userSignupPost)
+	router.GET("/userlogin", userLoginGet)
 	router.Run()
 }

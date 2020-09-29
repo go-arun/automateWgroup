@@ -17,6 +17,7 @@
       </div>
     <div class="container mt-5 ">
             <div class="jumbotron  mx-auto" style="width: 60%;">
+              <a class="float-right m-1" href="http://debian:8080/signup">Sign Up</a>
                 <!-- <form class="form-block"> -->
                 <form  class="form-block pb-3" method="POST" onsubmit="return verify_inputs()">
                     <h4>User Login</h4>
@@ -33,7 +34,7 @@
                                     <i class="fas fa-user"></i>
                                     </span>
                                 </div>
-                                <input name="uname" id="uname" type="text" class="form-control" placeholder="Mobile Numer Eg:+91XXXXXXXXXX">
+                                <input name="mobile_no" id="mobile_no"  required="true" class="form-control" placeholder="Mobile Numer Eg:98460XXXXX" maxlength="10">
                             </div>
                         </div>
                     </div>
@@ -47,7 +48,7 @@
         function  verify_inputs(){
             var uname = document.getElementById("uname").value;
             var pwd = document.getElementById("pwd").value;
-            if (uname=="" || pwd ==""){
+            if (mobile_no==""){
                 alert("Please make sure Username and Password Provided !!")
                 return false
             }

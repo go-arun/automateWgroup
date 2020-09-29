@@ -9,24 +9,22 @@
     <title>{{.title}}</title>
   </head>
   <body>
-    <div class="alert alert-warning alert-dismissible fade show" role="alert" style="display: {{.diplay}};">
+    <!-- <div class="alert alert-warning alert-dismissible fade show" role="alert" style="display: {{.diplay}};">
         <strong>Oh!!!!</strong> You have entered an invalid username or password.
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
-      </div>
+    </div> -->
     <div class="container mt-5 ">
             <div class="jumbotron  mx-auto p-5" style="width: 40%;">
                 <h4 class="p-1">Create New Account </h4>
                 <form  class="form-block pb-3" method="POST" onsubmit="return verify_inputs()">
                     <!-- FontAwesome -->
-
-                                <input name="mobile" id="mobile" type="text" class="form-control p-1" placeholder="Mobile Number">
-                                <input name="cust_name" id="cust_name" type="text" class="form-control p-1" placeholder="Your Name">
-                                <input name="house_name" id="house_name" type="text" class="form-control p-1" placeholder="House Name/Number">
-                                <input name="street_name" id="street_name" type="text" class="form-control p-1" placeholder="Street Name">
-                                <input name="lmark_name" id="lmark_name" type="text" class="form-control p-1" placeholder="Landmark Eg:Near Railway Gate">
-
+                                <input name="mobile" id="mobile" type="text" class="form-control p-1 m-1" placeholder="Mobile Number">
+                                <input name="cust_name" id="cust_name" type="text" class="form-control p-1 m-1" placeholder="Your Name">
+                                <input name="house_name" id="house_name" type="text" class="form-control p-1 m-1" placeholder="House Name/Number">
+                                <input name="street_name" id="street_name" type="text" class="form-control p-1 m-1" placeholder="Street Name">
+                                <input name="lmark_name" id="lmark_name" type="text" class="form-control p-1 m-1" placeholder="Landmark Eg:Near Railway Gate">
                     <button type="submit" class="btn btn-primary mb-4 float-right">Submit</button>
                 </form>
             </div>
@@ -48,7 +46,6 @@
                  alert("All fields are mandatory Except Landmark!!")
                 return false
             }
-
         }
     </script>
     <!-- Optional JavaScript -->

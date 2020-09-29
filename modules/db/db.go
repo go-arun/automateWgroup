@@ -42,12 +42,21 @@ func Connect() {
 		}
 	}
 }
+//AddNewCustomer ... In final desing may return newly generated ID
+func AddNewCustomer(mob,name,hName,sName,lMark string)(error){
+	insForm, err := Connection.Prepare(
+		"INSERT INTO cust_master(cust_mob,cust_name,cust_adr1,cust_adr2,cust_lmark) VALUES (?,?,?,?,?)",
+	)
+	_, err = insForm.Exec(mob,name,hName,sName,lMark)
+	if err != nil {
+		fmt.Println(err)
+		return err // If insert failed return error Only chance is while trying for duplicate entry
 
-// item_desc varchar(45)
-// item_sel_price decimal(2,0)
-// item_buy_price decimal(2,0)
-// item_unit varchar(4)
-// item_stock int(11)
+	}
+	return nil
+
+}
+//InsertNewCatagory ...
 func InsertNewCatagory(itemName, itemUnit string) (string, error) {
 	insForm, err := Connection.Prepare(
 		"INSERT INTO item_master(item_desc,item_unit) VALUES (?,?)",
