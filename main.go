@@ -274,6 +274,7 @@ func userIndexPost(c *gin.Context) {
 	IsUsrSectionActive := session.SessinStatus(c, "user_session_cookie")
 	if IsUsrSectionActive {
 		//Move to Orders Page TBD
+		fmt.Println("Session is active for this user")
 	} else {
 		fmt.Println("No Active USR Sessions found ")
 		//Login User

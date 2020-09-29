@@ -37,6 +37,7 @@ func AddAdminSessionIDToDB(userName string) string {
 	insForm.Exec(sessID, userName)
 	return sessID
 }
+
 //AddUserSessionIDToDB ...
 func AddUserSessionIDToDB(mobNo int) string {
 	sessID, _ := GenerateNewSessionID()
@@ -114,7 +115,12 @@ func SessinStatus(c *gin.Context, cookieName string) (sesStatus bool) {
 	if sessionCookie == "" { // no cookie found
 		return sesStatus // by default 'recordFound' val will be false
 	} //cookie received frim browser still we need to ensure from database too
-	sesStatus, _ = db.TraceUserWithSID(sessionCookie)
+	if cookieName == "admin_session_cookie" { // divert here based on which sesid user/admin
+		sesStatus, _ = db.TraceAdminWithSIDinDB(sessionCookie)
+	} else {
+		sesStatus, _ = db.TraceUserWithSIDinDB(sessionCookie)
+	}
+
 	fmt.Println("Admin Session Exissts ?", sesStatus)
 	return sesStatus //
 }

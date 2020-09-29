@@ -42,12 +42,13 @@ func Connect() {
 		}
 	}
 }
+
 //AddNewCustomer ... In final desing may return newly generated ID
-func AddNewCustomer(mob,name,hName,sName,lMark string)(error){
+func AddNewCustomer(mob, name, hName, sName, lMark string) error {
 	insForm, err := Connection.Prepare(
 		"INSERT INTO cust_master(cust_mob,cust_name,cust_adr1,cust_adr2,cust_lmark) VALUES (?,?,?,?,?)",
 	)
-	_, err = insForm.Exec(mob,name,hName,sName,lMark)
+	_, err = insForm.Exec(mob, name, hName, sName, lMark)
 	if err != nil {
 		fmt.Println(err)
 		return err // If insert failed return error Only chance is while trying for duplicate entry
@@ -56,6 +57,7 @@ func AddNewCustomer(mob,name,hName,sName,lMark string)(error){
 	return nil
 
 }
+
 //InsertNewCatagory ...
 func InsertNewCatagory(itemName, itemUnit string) (string, error) {
 	insForm, err := Connection.Prepare(
@@ -82,8 +84,8 @@ func InsertNewCatagory(itemName, itemUnit string) (string, error) {
 	return strconv.Itoa(itemID), nil
 }
 
-//TraceUserWithSID ... locate user with sessID
-func TraceUserWithSID(sessCookie string) (sessStatus bool, adminName string) {
+//TraceAdminWithSIDinDB ... locate user with sessID
+func TraceAdminWithSIDinDB(sessCookie string) (sessStatus bool, adminName string) {
 	selDB, err := Connection.Query("SELECT admin_uname FROM admin_master WHERE admin_sesid = '" + sessCookie + "' ")
 	if err != nil {
 		panic(err.Error())
@@ -99,4 +101,23 @@ func TraceUserWithSID(sessCookie string) (sessStatus bool, adminName string) {
 		return sessStatus, adminName
 	}
 	return sessStatus, adminName
+}
+
+//TraceUserWithSIDinDB ...
+func TraceUserWithSIDinDB(sessCookie string) (sessStatus bool, custName string) {
+	selDB, err := Connection.Query("SELECT cust_name FROM cust_master WHERE cust_sesid = '" + sessCookie + "' ")
+	if err != nil {
+		panic(err.Error())
+	}
+	for selDB.Next() {
+		err = selDB.Scan(&custName)
+		if err != nil {
+			panic(err.Error())
+		}
+	}
+	if custName != "" {
+		sessStatus = true
+		return sessStatus, custName
+	}
+	return sessStatus, custName
 }
