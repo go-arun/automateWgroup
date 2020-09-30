@@ -163,7 +163,7 @@ func SetUserSessionCookie(c *gin.Context, mobNumber int, sessionCookieName strin
 	sessionID := AddUserSessionIDToDB(mobNumber) // Generate a new SSID and insert to DB
 	c.SetCookie(sessionCookieName,
 		sessionID,
-		3600*12, // 12hrs
+		3600*8760, // 8760hrs = 1 Year
 		"/",
 		"", false, false, //domain excluded
 	)

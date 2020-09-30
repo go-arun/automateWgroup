@@ -12,6 +12,7 @@ import (
 	"github.com/go-arun/fishrider/modules/db"
 	"github.com/go-arun/fishrider/modules/fileoperation"
 	"github.com/go-arun/fishrider/modules/session"
+	"github.com/go-arun/fishrider/modules/smsapi"
 )
 
 //GlobalMobNo ... temporarly storing user mobile no here while login
@@ -259,10 +260,10 @@ func userSignupPost(c *gin.Context) {
 		fmt.Println("ERROR inserting new user")
 	}
 
-	//After signup continue to Order Page TBD Change below code
+	//After signup continue to Login Page
 	c.HTML(
 		http.StatusOK,
-		"user_signup.html", gin.H{
+		"user_login.html", gin.H{
 			"title": "User Registration",
 		})
 
@@ -337,11 +338,16 @@ func userOtpVerifyPost(c *gin.Context) {
 	)
 
 }
-func userLogoutGet(c *gin.Context){
+func userLogoutGet(c *gin.Context) {
 	session.RemoveUserSessionIDFromDB(c)
 	c.Redirect(http.StatusTemporaryRedirect, "/") // redirecting to item listing page
 	c.Abort()
 
+}
+func otpGet(c *gin.Context){
+	//smsapi.GenerateOTP("919846500400")
+	fmt.Println(smsapi.IsOTPverified("08b7e0e6-5c76-4d15-aa41-90785fc4f831","206272"))
+	
 }
 func main() {
 	db.Connect() //db Connection
@@ -363,5 +369,7 @@ func main() {
 	router.POST("/userlogin", userLoginPost)
 	router.POST("/userotpverify", userOtpVerifyPost)
 	router.GET("/usrlogout", userLogoutGet)
+	//TestCode
+	router.GET("/otp",otpGet)
 	router.Run()
 }
