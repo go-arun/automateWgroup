@@ -13,7 +13,7 @@ import (
 
 type sendResponse struct { // to store the values receving while initating for OTP, and Otp_id is required later in varification process
 	Otp_id, Status string
-	expiry        int
+	expiry         int
 }
 type verifyResponse struct { // to store response of OTP verification with code received in Mobile
 	Status, Error string
@@ -21,6 +21,8 @@ type verifyResponse struct { // to store response of OTP verification with code 
 
 //GenerateOTP ...
 func GenerateOTP(mob string) (optID string) {
+	mob = "91"+mob // added countryCode
+	fmt.Println("Sening OTP to Mobile:",mob)
 	var apiInitalResponse sendResponse
 
 	url := "https://d7networks.com/api/verifier/send"
@@ -52,13 +54,13 @@ func GenerateOTP(mob string) (optID string) {
 	fmt.Println(string(body))
 
 	json.Unmarshal(body, &apiInitalResponse)
-	fmt.Println("OTP-ID-->",apiInitalResponse.Otp_id)
+	fmt.Println("OTP-ID-->", apiInitalResponse.Otp_id)
 	return apiInitalResponse.Otp_id
 
 }
 
-//IsOTPverified ...
-func IsOTPverified(otpID, otpCode string) (status bool, respMsg string) {
+//VerifyOTP ...
+func VerifyOTP(otpID, otpCode string) (status bool, respMsg string) {
 
 	var apiResponse verifyResponse
 
@@ -67,8 +69,8 @@ func IsOTPverified(otpID, otpCode string) (status bool, respMsg string) {
 
 	payload := &bytes.Buffer{}
 	writer := multipart.NewWriter(payload)
-	_ = writer.WriteField("otp_id", "b6ed371c-b25b-4669-b636-23f2be3fa0a8")
-	_ = writer.WriteField("otp_code", "702720")
+	_ = writer.WriteField("otp_id", otpID)
+	_ = writer.WriteField("otp_code", otpCode)
 	err := writer.Close()
 	if err != nil {
 		fmt.Println(err)

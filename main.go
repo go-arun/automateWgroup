@@ -15,8 +15,11 @@ import (
 	"github.com/go-arun/fishrider/modules/smsapi"
 )
 
-//GlobalMobNo ... temporarly storing user mobile no here while login
-var GlobalMobNo int
+// to store otp_id received from SMS API Provider
+var otpIDfromProvider string
+
+// to store user mobile number
+var globalMobNo int
 
 //Item ... to store item details while retriving from DB
 type Item struct {
@@ -316,7 +319,9 @@ func userLoginGet(c *gin.Context) {
 
 }
 func userLoginPost(c *gin.Context) {
-	GlobalMobNo, _ = strconv.Atoi(c.PostForm("mobile_no"))
+	otpIDfromProvider = smsapi.GenerateOTP(c.PostForm("mobile_no"))
+	globalMobNo, _ = strconv.Atoi(otpIDfromProvider)
+
 	c.HTML(
 		http.StatusOK,
 		"user_otp_verification.html",
@@ -326,8 +331,21 @@ func userLoginPost(c *gin.Context) {
 	)
 }
 func userOtpVerifyPost(c *gin.Context) {
-	//TBD SMS API , Now blindly accepting any code
-	session.SetUserSessionCookie(c, GlobalMobNo, "user_session_cookie")
+	codeP1 := c.PostForm("code_p1")
+	codeP2 := c.PostForm("code_p2")
+	codeP3 := c.PostForm("code_p3")
+	codeP4 := c.PostForm("code_p4")
+	codeP5 := c.PostForm("code_p5")
+	codeP6 := c.PostForm("code_p6")
+	wholeCode := codeP1 + codeP2 + codeP3 + codeP4 + codeP5 + codeP6
+	mobileVerified,_ := smsapi.VerifyOTP(otpIDfromProvider, wholeCode)
+	if  mobileVerified {
+		session.SetUserSessionCookie(c, globalMobNo, "user_session_cookie")
+		fmt.Println("OTP Verification Success")
+	} else {
+		fmt.Println("OTP Verification Success")
+	}
+
 	//User Logged so Move to Orders Page
 	c.HTML(
 		http.StatusOK,
@@ -344,11 +362,11 @@ func userLogoutGet(c *gin.Context) {
 	c.Abort()
 
 }
-func otpGet(c *gin.Context){
-	fmt.Println("Response -OTP-ID",smsapi.GenerateOTP("919846500400"))
+func otpGet(c *gin.Context) {
+	fmt.Println("Response -OTP-ID", smsapi.GenerateOTP("919846500400"))
 
-	//fmt.Println(smsapi.IsOTPverified("08b7e0e6-5c76-4d15-aa41-90785fc4f831","206272"))
-	
+	//fmt.Println(smsapi.VerifyOTP("08b7e0e6-5c76-4d15-aa41-90785fc4f831","206272"))
+
 }
 func main() {
 	db.Connect() //db Connection
@@ -371,6 +389,6 @@ func main() {
 	router.POST("/userotpverify", userOtpVerifyPost)
 	router.GET("/usrlogout", userLogoutGet)
 	//TestCode
-	router.GET("/otp",otpGet)
+	router.GET("/otp", otpGet)
 	router.Run()
 }
