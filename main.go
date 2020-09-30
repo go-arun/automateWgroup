@@ -345,8 +345,9 @@ func userLogoutGet(c *gin.Context) {
 
 }
 func otpGet(c *gin.Context){
-	//smsapi.GenerateOTP("919846500400")
-	fmt.Println(smsapi.IsOTPverified("08b7e0e6-5c76-4d15-aa41-90785fc4f831","206272"))
+	fmt.Println("Response -OTP-ID",smsapi.GenerateOTP("919846500400"))
+
+	//fmt.Println(smsapi.IsOTPverified("08b7e0e6-5c76-4d15-aa41-90785fc4f831","206272"))
 	
 }
 func main() {
