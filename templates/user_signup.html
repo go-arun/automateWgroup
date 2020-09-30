@@ -9,18 +9,18 @@
     <title>{{.title}}</title>
   </head>
   <body>
-    <!-- <div class="alert alert-warning alert-dismissible fade show" role="alert" style="display: {{.diplay}};">
-        <strong>Oh!!!!</strong> You have entered an invalid username or password.
+    <div class="alert alert-warning alert-dismissible fade show" role="alert" style="display: {{.diplay}};">
+        <strong>Not Registred Yet??</strong> Please register first to Continue Shopping...
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
-    </div> -->
+    </div>
     <div class="container mt-5 ">
             <div class="jumbotron  mx-auto p-5" style="width: 40%;">
                 <h4 class="p-1">Create New Account </h4>
                 <form  class="form-block pb-3" method="POST" onsubmit="return verify_inputs()">
                     <!-- FontAwesome -->
-                                <input name="mobile" id="mobile" type="text" class="form-control p-1 m-1" placeholder="Mobile Number">
+                                <input name="mobile" id="mobile" type="text" maxlength="10" class="form-control p-1 m-1" onkeypress="return event.charCode >= 47 && event.charCode <= 57" placeholder="Mobile Number">
                                 <input name="cust_name" id="cust_name" type="text" class="form-control p-1 m-1" placeholder="Your Name">
                                 <input name="house_name" id="house_name" type="text" class="form-control p-1 m-1" placeholder="House Name/Number">
                                 <input name="street_name" id="street_name" type="text" class="form-control p-1 m-1" placeholder="Street Name">
@@ -45,6 +45,10 @@
             if (mob=="" || cust_name =="" || house_name=="" || street_name=="" ){
                  alert("All fields are mandatory Except Landmark!!")
                 return false
+            }
+            if(mob.length != 10){
+              alert ("Please Re-Check mobile number (Should be 10 digits)!!")
+              return false
             }
         }
     </script>

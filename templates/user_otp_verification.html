@@ -16,7 +16,7 @@
         </button>
       </div>
     <div class="container mt-5 ">
-            <div class="jumbotron  mx-auto" style="width: 40%;">
+            <div class="jumbotron  mx-auto" style="width: 60%;">
                 <!-- <form class="form-block"> -->
                 <form  class="form-block pb-3" action="/userotpverify" method="POST" onsubmit="return verify_inputs()">
                     <h4 class="text-center">Enter code received</h4>
@@ -28,12 +28,12 @@
                     <div class="container" style="width: 60%;" >
                         <div class="form-group">
                             <div class="input-group ">
-                                <input name="code_p1" id="code_p1" type="text" class="form-control p-1 m-1 text-center" placeholder="__" maxlength="1">
-                                <input name="code_p2" id="code_p2" type="text" class="form-control p-1 m-1 text-center" placeholder="__" maxlength="1">
-                                <input name="code_p3" id="code_p3" type="text" class="form-control p-1 m-1 text-center" placeholder="__" maxlength="1">
-                                <input name="code_p4" id="code_p4" type="text" class="form-control p-1 m-1 text-center" placeholder="__" maxlength="1">
-                                <input name="code_p5" id="code_p5" type="text" class="form-control p-1 m-1 text-center" placeholder="__" maxlength="1">
-                                <input name="code_p6" id="code_p6" type="text" class="form-control p-1 m-1 text-center" placeholder="__" maxlength="1">
+                                <input onkeyup="moveFocusToNext(this.id)" name="code_p1" id="code_p1" type="text" class="form-control p-1 m-1 text-center" placeholder="__" maxlength="1">
+                                <input onkeyup="moveFocusToNext(this.id)" name="code_p2" id="code_p2" type="text" class="form-control p-1 m-1 text-center" placeholder="__" maxlength="1">
+                                <input onkeyup="moveFocusToNext(this.id)" name="code_p3" id="code_p3" type="text" class="form-control p-1 m-1 text-center" placeholder="__" maxlength="1">
+                                <input onkeyup="moveFocusToNext(this.id)" name="code_p4" id="code_p4" type="text" class="form-control p-1 m-1 text-center" placeholder="__" maxlength="1">
+                                <input onkeyup="moveFocusToNext(this.id)" name="code_p5" id="code_p5" type="text" class="form-control p-1 m-1 text-center" placeholder="__" maxlength="1">
+                                <input onkeyup="moveFocusToNext(this.id)" name="code_p6" id="code_p6" type="text" class="form-control p-1 m-1 text-center" placeholder="__" maxlength="1">
                             </div>
                         </div>
                     </div>
@@ -44,6 +44,20 @@
 
     <!--MyJava-->
     <script>
+        function moveFocusToNext(textBoxID){
+          if (textBoxID == "code_p1"){
+            document.getElementById("code_p2").focus();
+          }else if (textBoxID == "code_p2"){
+            document.getElementById("code_p3").focus();
+          }else if (textBoxID == "code_p3"){
+            document.getElementById("code_p4").focus();
+          }else if (textBoxID == "code_p4"){
+            document.getElementById("code_p5").focus();
+          }else if (textBoxID == "code_p5"){
+            document.getElementById("code_p6").focus();
+          }
+          // alert(this.Id)
+        }
         function  verify_inputs(){
             var code_p1 = document.getElementById("code_p1").value;
             var code_p2 = document.getElementById("code_p2").value;

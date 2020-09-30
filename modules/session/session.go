@@ -71,6 +71,7 @@ func RemoveAdminSessionIDFromDB(c *gin.Context) {
 		"", false, false,
 	)
 }
+
 //RemoveUserSessionIDFromDB ...
 func RemoveUserSessionIDFromDB(c *gin.Context) {
 	if db.Dbug {
@@ -104,8 +105,8 @@ func CheckPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
-//UsrCredentialsVerify ...
-func UsrCredentialsVerify(uname, pwd string) bool {
+//AdminCredentialsVerify ...
+func AdminCredentialsVerify(uname, pwd string) bool {
 	selDB, err := db.Connection.Query("SELECT admin_passwd,admin_sesid FROM admin_master WHERE admin_uname = '" + uname + "' ")
 	if err != nil {
 		panic(err.Error())
@@ -126,7 +127,26 @@ func UsrCredentialsVerify(uname, pwd string) bool {
 	} else {
 		return false // No Such user
 	}
-
+}
+//UserCredentialsVerify ...
+func UserCredentialsVerify(mobNum string) (userExist bool,custID int,custName string) {
+	selDB, err := db.Connection.Query("SELECT cust_id,cust_name FROM cust_master WHERE cust_mob= '" + mobNum + "'" )
+	if err != nil {
+		panic(err.Error())
+	}
+	for selDB.Next() {
+		err = selDB.Scan(&custID,&custName)
+		if err != nil {
+			panic(err.Error())
+		}
+	}
+	//If any matching record found 
+	if custName =="" {
+		return
+	} else {
+		userExist = true
+		return
+	}
 }
 
 //SessinStatus ...return true if there is an active admin session

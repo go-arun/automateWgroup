@@ -34,7 +34,8 @@
                                     <i class="fas fa-mobile"></i>
                                     </span>
                                 </div>
-                                <input name="mobile_no" id="mobile_no"  required="true" class="form-control" placeholder="Mobile Numer Eg:98460XXXXX" maxlength="10">
+                                <!-- <input name="mobile_no" id="mobile_no"  required="true" class="form-control" placeholder="Mobile Numer Eg:98460XXXXX" maxlength="10"> -->
+                                <input name="mobile" required="true" id="mobile" type="text" maxlength="10" class="form-control p-1 m-1" onkeypress="return event.charCode >= 47 && event.charCode <= 57" placeholder="Mobile Number">
                             </div>
                         </div>
                     </div>
@@ -46,8 +47,12 @@
     <!--MyJava-->
     <script>
         function  verify_inputs(){ //TBD filed required allready given ,SO do another error check, like verify mobile number , 
+          var mob = document.getElementById("mobile").value
+          if (mob.length != 10){
+              alert("Mobile number shoud have 10 Digits You missed "+ (10 - mob.length) + " Digit/s")
+              return false
+          }
           
-
         }
     </script>
     <!-- Optional JavaScript -->

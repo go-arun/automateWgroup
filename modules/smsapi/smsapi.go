@@ -21,6 +21,7 @@ type verifyResponse struct { // to store response of OTP verification with code 
 
 //GenerateOTP ...
 func GenerateOTP(mob string) (optID string) {
+	return "comment this line later"
 	mob = "91"+mob // added countryCode
 	fmt.Println("Sening OTP to Mobile:",mob)
 	var apiInitalResponse sendResponse
@@ -61,6 +62,9 @@ func GenerateOTP(mob string) (optID string) {
 
 //VerifyOTP ...
 func VerifyOTP(otpID, otpCode string) (status bool, respMsg string) {
+	respMsg = "Comment below 3 liens later"
+	status = true
+	return
 
 	var apiResponse verifyResponse
 

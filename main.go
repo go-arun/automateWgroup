@@ -157,7 +157,7 @@ func adminPost(c *gin.Context) {
 	// name := c.Request.PostForm["uname"][0]
 	// pwd  := c.Request.PostForm["pwd"][0]
 
-	if session.UsrCredentialsVerify(name, pwd) { //return value 'true' means creadentias are matching ..
+	if session.AdminCredentialsVerify(name, pwd) { //return value 'true' means creadentias are matching ..
 		//SetNewSessionID
 		session.SetAdminSessionCookie(c, name, "admin_session_cookie")
 		populateCategoryItems(c)
@@ -246,9 +246,11 @@ func userIndexGet(c *gin.Context) {
 func userSignupGet(c *gin.Context) {
 	c.HTML(
 		http.StatusOK,
-		"user_signup.html", gin.H{
-			"title": "User Registration",
-		})
+		"user_signup.html",
+		gin.H{"title": "User SignUp",
+			"diplay": "none", // TBD make use of this logic to diplay error
+		},
+	)
 
 }
 func userSignupPost(c *gin.Context) {
@@ -319,16 +321,29 @@ func userLoginGet(c *gin.Context) {
 
 }
 func userLoginPost(c *gin.Context) {
-	otpIDfromProvider = smsapi.GenerateOTP(c.PostForm("mobile_no"))
-	globalMobNo, _ = strconv.Atoi(otpIDfromProvider)
 
-	c.HTML(
-		http.StatusOK,
-		"user_otp_verification.html",
-		gin.H{"title": "OTP Verification",
-			"diplay": "none", // TBD make use of this logic to diplay error
-		},
-	)
+	userMob := c.PostForm("mobile")
+	RegisteredUser, _, _ := session.UserCredentialsVerify(userMob)
+	if !RegisteredUser { // This mobile not in our record , Direct to register page
+		c.HTML(
+			http.StatusOK,
+			"user_signup.html",
+			gin.H{"title": "User SignUp",
+				"diplay": "block", // TBD make use of this logic to diplay error
+			},
+		)
+
+	} else {
+		otpIDfromProvider = smsapi.GenerateOTP(userMob)
+		globalMobNo, _ = strconv.Atoi(userMob)
+		c.HTML(
+			http.StatusOK,
+			"user_otp_verification.html",
+			gin.H{"title": "OTP Verification",
+				"diplay": "none", // TBD make use of this logic to diplay error
+			},
+		)
+	}
 }
 func userOtpVerifyPost(c *gin.Context) {
 	codeP1 := c.PostForm("code_p1")
@@ -338,8 +353,8 @@ func userOtpVerifyPost(c *gin.Context) {
 	codeP5 := c.PostForm("code_p5")
 	codeP6 := c.PostForm("code_p6")
 	wholeCode := codeP1 + codeP2 + codeP3 + codeP4 + codeP5 + codeP6
-	mobileVerified,_ := smsapi.VerifyOTP(otpIDfromProvider, wholeCode)
-	if  mobileVerified {
+	mobileVerified, _ := smsapi.VerifyOTP(otpIDfromProvider, wholeCode)
+	if mobileVerified {
 		session.SetUserSessionCookie(c, globalMobNo, "user_session_cookie")
 		fmt.Println("OTP Verification Success")
 	} else {
