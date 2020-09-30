@@ -157,11 +157,13 @@ func SessinStatus(c *gin.Context, cookieName string) (sesStatus bool) {
 	} //cookie received frim browser still we need to ensure from database too
 	if cookieName == "admin_session_cookie" { // divert here based on which sesid user/admin
 		sesStatus, _ = db.TraceAdminWithSIDinDB(sessionCookie)
-	} else {
+	}else if cookieName == "user_session_cookie" {
 		sesStatus, _ = db.TraceUserWithSIDinDB(sessionCookie)
+	}else{ // then it is about temp_sesid go ahed 
+		sesStatus, _ = db.TraceTempSIDinDB(sessionCookie)
 	}
 
-	fmt.Println("Admin Session Exissts ?", sesStatus)
+	fmt.Println(cookieName," Session Exists Status --> ?", sesStatus)
 	return sesStatus //
 }
 

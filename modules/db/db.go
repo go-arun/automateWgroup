@@ -103,6 +103,26 @@ func TraceAdminWithSIDinDB(sessCookie string) (sessStatus bool, adminName string
 	return sessStatus, adminName
 }
 
+//TraceTempSIDinDB ...
+func TraceTempSIDinDB(sessCookie string)(sessStatus bool) {
+	selDB, err := Connection.Query("SELECT temp_sesid FROM temp_cart WHERE temp_sesid = '" + sessCookie + "' ")
+	if err != nil {
+		panic(err.Error())
+	}
+	for selDB.Next() {
+		err = selDB.Scan(&custName)
+		if err != nil {
+			panic(err.Error())
+		}
+	}
+	if custName != "" {
+		sessStatus = true
+		return sessStatus, custName
+	}
+	return sessStatus, custName
+
+}
+
 //TraceUserWithSIDinDB ...
 func TraceUserWithSIDinDB(sessCookie string) (sessStatus bool, custName string) {
 	selDB, err := Connection.Query("SELECT cust_name FROM cust_master WHERE cust_sesid = '" + sessCookie + "' ")
