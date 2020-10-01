@@ -386,6 +386,10 @@ func otpGet(c *gin.Context) {
 
 func skGet(c *gin.Context){
 	session.PushSelectionToCookie(c,"1","10")
+	session.PushSelectionToCookie(c,"1","10")
+}
+func gkGet(c *gin.Context){
+	session.PullCartItemFromCookie(c)
 }
 func main() {
 	db.Connect() //db Connection
@@ -410,6 +414,6 @@ func main() {
 	//TestCode
 	router.GET("/otp", otpGet)
 	router.GET("/sk",skGet)
-	// router.GET("/gk",gkGet)
+	router.GET("/gk",gkGet)
 	router.Run()
 }

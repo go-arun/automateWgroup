@@ -213,11 +213,24 @@ func PushSelectionToCookie(c *gin.Context, itemCode, itemQty string) {
 		log.Fatal("Cannot encode to JSON ", err)
 	}
 	fmt.Println("Cartitem->", string(cartJSON))
-	c.SetCookie("cat",
+	c.SetCookie("user_cart",
 		string(cartJSON),
 		3600*8760, // 8760hrs = 1 Year
 		"/",
 		"", false, false, //domain excluded
 	)
+
+}
+//PullCartItemFromCookie ... Collect cart items from Cookie
+func PullCartItemFromCookie(c *gin.Context ){
+	sessionCookie, _ := c.Cookie("user_cart")
+	fmt.Println("sessionCookie-->",sessionCookie)
+	var itemInCart cartItems
+	json.Unmarshal([]byte(sessionCookie), &itemInCart)
+
+	for key,_ := range itemInCart{
+		fmt.Println(itemInCart[key].ICode)
+		// fmt.Println("key and val=",key,val)
+	}
 
 }
