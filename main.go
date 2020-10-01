@@ -383,6 +383,10 @@ func otpGet(c *gin.Context) {
 	//fmt.Println(smsapi.VerifyOTP("08b7e0e6-5c76-4d15-aa41-90785fc4f831","206272"))
 
 }
+
+func skGet(c *gin.Context){
+	session.PushSelectionToCookie(c,"1","10")
+}
 func main() {
 	db.Connect() //db Connection
 	router := gin.Default()
@@ -405,5 +409,7 @@ func main() {
 	router.GET("/usrlogout", userLogoutGet)
 	//TestCode
 	router.GET("/otp", otpGet)
+	router.GET("/sk",skGet)
+	// router.GET("/gk",gkGet)
 	router.Run()
 }

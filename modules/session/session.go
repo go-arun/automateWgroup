@@ -3,13 +3,22 @@ package session
 
 import (
 	"crypto/rand"
+	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-arun/fishrider/modules/db"
 	"golang.org/x/crypto/bcrypt"
 )
+
+type item struct {
+	ICode, IQty string
+}
+type cartItems []item
+
+var cart cartItems // All items selectig by user will be appened to this array and  later push it as cookie
 
 //GenerateNewSessionID ... generating New UUID
 func GenerateNewSessionID() (string, error) {
@@ -128,20 +137,21 @@ func AdminCredentialsVerify(uname, pwd string) bool {
 		return false // No Such user
 	}
 }
+
 //UserCredentialsVerify ...
-func UserCredentialsVerify(mobNum string) (userExist bool,custID int,custName string) {
-	selDB, err := db.Connection.Query("SELECT cust_id,cust_name FROM cust_master WHERE cust_mob= '" + mobNum + "'" )
+func UserCredentialsVerify(mobNum string) (userExist bool, custID int, custName string) {
+	selDB, err := db.Connection.Query("SELECT cust_id,cust_name FROM cust_master WHERE cust_mob= '" + mobNum + "'")
 	if err != nil {
 		panic(err.Error())
 	}
 	for selDB.Next() {
-		err = selDB.Scan(&custID,&custName)
+		err = selDB.Scan(&custID, &custName)
 		if err != nil {
 			panic(err.Error())
 		}
 	}
-	//If any matching record found 
-	if custName =="" {
+	//If any matching record found
+	if custName == "" {
 		return
 	} else {
 		userExist = true
@@ -157,13 +167,13 @@ func SessinStatus(c *gin.Context, cookieName string) (sesStatus bool) {
 	} //cookie received frim browser still we need to ensure from database too
 	if cookieName == "admin_session_cookie" { // divert here based on which sesid user/admin
 		sesStatus, _ = db.TraceAdminWithSIDinDB(sessionCookie)
-	}else if cookieName == "user_session_cookie" {
+	} else if cookieName == "user_session_cookie" {
 		sesStatus, _ = db.TraceUserWithSIDinDB(sessionCookie)
-	}else{ // then it is about temp_sesid go ahed 
+	} else { // then it is about temp_sesid go ahed
 		sesStatus = db.TraceTempSIDinDB(sessionCookie)
 	}
 
-	fmt.Println(cookieName," Session Exists Status --> ?", sesStatus)
+	fmt.Println(cookieName, " Session Exists Status --> ?", sesStatus)
 	return sesStatus //
 }
 
@@ -189,4 +199,25 @@ func SetUserSessionCookie(c *gin.Context, mobNumber int, sessionCookieName strin
 		"/",
 		"", false, false, //domain excluded
 	)
+}
+
+//PushSelectionToCookie ...
+func PushSelectionToCookie(c *gin.Context, itemCode, itemQty string) {
+	var newItem item
+	newItem.ICode = itemCode
+	newItem.IQty = itemQty
+	fmt.Println("newItem.iCode & newItem.iQty", newItem.ICode, newItem.IQty)
+	cart = append(cart, newItem)
+	cartJSON, err := json.Marshal(cart)
+	if err != nil {
+		log.Fatal("Cannot encode to JSON ", err)
+	}
+	fmt.Println("Cartitem->", string(cartJSON))
+	c.SetCookie("cat",
+		string(cartJSON),
+		3600*8760, // 8760hrs = 1 Year
+		"/",
+		"", false, false, //domain excluded
+	)
+
 }
