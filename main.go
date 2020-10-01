@@ -276,10 +276,17 @@ func userSignupPost(c *gin.Context) {
 
 //items selected and moving to Orders page
 func userIndexPost(c *gin.Context) {
+	lastItmID := db.GetLastItemID()
+	for lastItmID > 0{
+		if c.PostForm(strconv.Itoa(lastItmID)) != "Qty" && c.PostForm(strconv.Itoa(lastItmID)) != ""{
+			fmt.Println("Items Selected-:",c.PostForm(strconv.Itoa(lastItmID)))
+		}
+		lastItmID = lastItmID-1
+	}
+
 	//Checking for any active sessions
 	IsUsrSectionActive := session.SessinStatus(c, "user_session_cookie")
 	if IsUsrSectionActive {
-		//Move to Orders Page TBD
 		c.HTML(
 			http.StatusOK,
 			"orders.html",

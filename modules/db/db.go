@@ -104,9 +104,9 @@ func TraceAdminWithSIDinDB(sessCookie string) (sessStatus bool, adminName string
 }
 
 //TraceTempSIDinDB ...
-func TraceTempSIDinDB(sessCookie string)(sessStatus bool) {
+func TraceTempSIDinDB(sessCookie string) (sessStatus bool) {
 	selDB, err := Connection.Query("SELECT temp_sesid FROM temp_cart WHERE temp_sesid = '" + sessCookie + "' ")
-	var tempSesid string // Just storing and later will check whether it is existing or not 
+	var tempSesid string // Just storing and later will check whether it is existing or not
 	if err != nil {
 		panic(err.Error())
 	}
@@ -118,7 +118,7 @@ func TraceTempSIDinDB(sessCookie string)(sessStatus bool) {
 	}
 	if tempSesid != "" {
 		sessStatus = true
-		return 
+		return
 	}
 	return //by default sessStatus value will be false , so we are safe
 }
@@ -140,4 +140,22 @@ func TraceUserWithSIDinDB(sessCookie string) (sessStatus bool, custName string) 
 		return sessStatus, custName
 	}
 	return sessStatus, custName
+}
+
+//GetLastItemID ...  Item ID is the name of slecet tag in html, so
+//at preset not found any other logic to pic the selected items from
+//item listing page , TBD : find out some other logic later
+func GetLastItemID() (count int) {
+	count = 0
+	selDB, err := Connection.Query("SELECT MAX(item_id) FROM item_master")
+	if err != nil {
+		panic(err.Error())
+	}
+	for selDB.Next() {
+		err = selDB.Scan(&count)
+		if err != nil {
+			panic(err.Error())
+		}
+	}
+	return
 }

@@ -39,6 +39,9 @@
                 <!-- <a class="dropdown-item" href="#">Livestock(Checken/Pork/Beef</a> -->
               </div>
             </li>
+            <li class="nav-item ">
+              <a class="nav-link" href="#">Hello Sign in</a>
+            </li>
           </ul>
         </div>
     </nav>
@@ -54,7 +57,7 @@
             <h4>{{ .Name}}</h4>
             <h4>Rs.{{ .Rate}}/{{.Unit}}</h4>
              <h4> inStock:{{.Stock}}</h4>
-            <select onchange="setVal()" name="f_qty" id="f_qty" style="width: 100px;">
+            <select onchange="setVal()" name="{{ .ID }}" id="{{ .ID }}" style="width: 100px;">
               <!-- <select cname="f_qty" id="f_qty" style="width: 192px;"> -->
               {{ if .IsUnitKg }}
                 <option value="Qty" >Select KG</option>
