@@ -279,7 +279,8 @@ func userIndexPost(c *gin.Context) {
 	lastItmID := db.GetLastItemID()
 	for lastItmID > 0{
 		if c.PostForm(strconv.Itoa(lastItmID)) != "Qty" && c.PostForm(strconv.Itoa(lastItmID)) != ""{
-			fmt.Println("Items Selected-:",c.PostForm(strconv.Itoa(lastItmID)))
+		if db.Dbug {fmt.Println("Items Selected-:",c.PostForm(strconv.Itoa(lastItmID)))}
+			session.PushSelectionToCookie(c,strconv.Itoa(lastItmID),c.PostForm(strconv.Itoa(lastItmID)))
 		}
 		lastItmID = lastItmID-1
 	}
