@@ -106,21 +106,21 @@ func TraceAdminWithSIDinDB(sessCookie string) (sessStatus bool, adminName string
 //TraceTempSIDinDB ...
 func TraceTempSIDinDB(sessCookie string)(sessStatus bool) {
 	selDB, err := Connection.Query("SELECT temp_sesid FROM temp_cart WHERE temp_sesid = '" + sessCookie + "' ")
+	var tempSesid string // Just storing and later will check whether it is existing or not 
 	if err != nil {
 		panic(err.Error())
 	}
 	for selDB.Next() {
-		err = selDB.Scan(&custName)
+		err = selDB.Scan(&tempSesid)
 		if err != nil {
 			panic(err.Error())
 		}
 	}
-	if custName != "" {
+	if tempSesid != "" {
 		sessStatus = true
-		return sessStatus, custName
+		return 
 	}
-	return sessStatus, custName
-
+	return //by default sessStatus value will be false , so we are safe
 }
 
 //TraceUserWithSIDinDB ...

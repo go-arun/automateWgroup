@@ -160,7 +160,7 @@ func SessinStatus(c *gin.Context, cookieName string) (sesStatus bool) {
 	}else if cookieName == "user_session_cookie" {
 		sesStatus, _ = db.TraceUserWithSIDinDB(sessionCookie)
 	}else{ // then it is about temp_sesid go ahed 
-		sesStatus, _ = db.TraceTempSIDinDB(sessionCookie)
+		sesStatus = db.TraceTempSIDinDB(sessionCookie)
 	}
 
 	fmt.Println(cookieName," Session Exists Status --> ?", sesStatus)
