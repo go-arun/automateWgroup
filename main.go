@@ -276,8 +276,9 @@ func userSignupPost(c *gin.Context) {
 
 //items selected and moving to Orders page
 func userIndexPost(c *gin.Context) {
-	lastItmID := db.GetLastItemID()
-	for lastItmID > 0{
+	lastItmID := db.GetLastItemID() // iterating from 0 to lastItmID val, to track 
+									// the selcted items by user.( html select id names are itemIds)
+	for lastItmID > 0{ // Storing selected items as Cookie
 		if c.PostForm(strconv.Itoa(lastItmID)) != "Qty" && c.PostForm(strconv.Itoa(lastItmID)) != ""{
 		if db.Dbug {fmt.Println("Items Selected-:",c.PostForm(strconv.Itoa(lastItmID)))}
 			session.PushSelectionToCookie(c,strconv.Itoa(lastItmID),c.PostForm(strconv.Itoa(lastItmID)))
@@ -287,14 +288,18 @@ func userIndexPost(c *gin.Context) {
 
 	//Checking for any active sessions
 	IsUsrSectionActive := session.SessinStatus(c, "user_session_cookie")
-	if IsUsrSectionActive {
-		c.HTML(
-			http.StatusOK,
-			"orders.html",
-			gin.H{"title": "User Login",
-				"diplay": "none", // TBD make use of this logic to diplay error
-			},
-		)
+	if IsUsrSectionActive { // Moving to Orders page
+		fmt.Println("user asession is actice -- So Moving from landing page to Oreder ")
+		c.Redirect(http.StatusTemporaryRedirect, "/orders")
+		
+		c.Abort()
+		// c.HTML(
+		// 	http.StatusOK,
+		// 	"orders.html",
+		// 	gin.H{"title": "User Login",
+		// 		"diplay": "none", // TBD make use of this logic to diplay error
+		// 	},
+		// )
 		fmt.Println("Session is active for this user")
 	} else {
 		fmt.Println("No Active USR Sessions found ")
@@ -370,6 +375,34 @@ func userOtpVerifyPost(c *gin.Context) {
 	}
 
 	//User Logged so Move to Orders Page
+	c.Redirect(http.StatusTemporaryRedirect,"/orders")
+	c.Abort()
+	// c.HTML(
+	// 	http.StatusOK,
+	// 	"orders.html",
+	// 	gin.H{"title": "User Login",
+	// 		"diplay": "none", // TBD make use of this logic to diplay error
+	// 	},
+	// )
+
+}
+func userLogoutGet(c *gin.Context) {
+	session.RemoveUserSessionIDFromDB(c)
+	c.Redirect(http.StatusTemporaryRedirect, "/") // redirecting to item listing page
+	c.Abort()
+
+}
+
+func userOrdersGet(c *gin.Context){
+	c.HTML(
+		http.StatusOK,
+		"orders.html",
+		gin.H{"title": "User Login",
+			"diplay": "none", // TBD make use of this logic to diplay error
+		},
+	)
+}
+func userOrdersPost(c *gin.Context){
 	c.HTML(
 		http.StatusOK,
 		"orders.html",
@@ -379,26 +412,20 @@ func userOtpVerifyPost(c *gin.Context) {
 	)
 
 }
-func userLogoutGet(c *gin.Context) {
-	session.RemoveUserSessionIDFromDB(c)
-	c.Redirect(http.StatusTemporaryRedirect, "/") // redirecting to item listing page
-	c.Abort()
+// func otpGet(c *gin.Context) {
+// 	fmt.Println("Response -OTP-ID", smsapi.GenerateOTP("919846500400"))
 
-}
-func otpGet(c *gin.Context) {
-	fmt.Println("Response -OTP-ID", smsapi.GenerateOTP("919846500400"))
+// 	//fmt.Println(smsapi.VerifyOTP("08b7e0e6-5c76-4d15-aa41-90785fc4f831","206272"))
 
-	//fmt.Println(smsapi.VerifyOTP("08b7e0e6-5c76-4d15-aa41-90785fc4f831","206272"))
+// }
 
-}
-
-func skGet(c *gin.Context){
-	session.PushSelectionToCookie(c,"1","10")
-	session.PushSelectionToCookie(c,"1","10")
-}
-func gkGet(c *gin.Context){
-	session.PullCartItemFromCookie(c)
-}
+// func skGet(c *gin.Context){
+// 	session.PushSelectionToCookie(c,"1","10")
+// 	session.PushSelectionToCookie(c,"1","10")
+// }
+// func gkGet(c *gin.Context){
+// 	session.PullCartItemFromCookie(c)
+// }
 func main() {
 	db.Connect() //db Connection
 	router := gin.Default()
@@ -418,10 +445,13 @@ func main() {
 	router.GET("/userlogin", userLoginGet)
 	router.POST("/userlogin", userLoginPost)
 	router.POST("/userotpverify", userOtpVerifyPost)
+	router.GET("/orders",userOrdersGet)
+	router.POST("/orders",userOrdersPost)
 	router.GET("/usrlogout", userLogoutGet)
-	//TestCode
-	router.GET("/otp", otpGet)
-	router.GET("/sk",skGet)
-	router.GET("/gk",gkGet)
+
+	// //TestCode
+	// router.GET("/otp", otpGet)
+	// router.GET("/sk",skGet)
+	// router.GET("/gk",gkGet)
 	router.Run()
 }
