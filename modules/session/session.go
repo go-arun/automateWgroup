@@ -16,9 +16,10 @@ import (
 type item struct {
 	ICode, IQty string
 }
-type cartItems []item
+//CartItems ... exported because it is using in main too
+type CartItems []item
 
-var cart cartItems // All items selectig by user will be appened to this array and  later push it as cookie
+var cart CartItems // All items selectig by user will be appened to this array and  later push it as cookie
 
 //GenerateNewSessionID ... generating New UUID
 func GenerateNewSessionID() (string, error) {
@@ -222,15 +223,16 @@ func PushSelectionToCookie(c *gin.Context, itemCode, itemQty string) {
 
 }
 //PullCartItemFromCookie ... Collect cart items from Cookie
-func PullCartItemFromCookie(c *gin.Context ){
+func PullCartItemFromCookie(c *gin.Context )(CartItems){
 	sessionCookie, _ := c.Cookie("user_cart")
 	fmt.Println("sessionCookie-->",sessionCookie)
-	var itemInCart cartItems
+	var itemInCart CartItems
 	json.Unmarshal([]byte(sessionCookie), &itemInCart)
+	return itemInCart
 
-	for key,_ := range itemInCart{
-		fmt.Println(itemInCart[key].ICode)
-		// fmt.Println("key and val=",key,val)
-	}
+	// for key,_ := range itemInCart{ // DONT REMOVE MAY REQ. LATER
+	// 	fmt.Println(itemInCart[key].ICode)
+	// 	// fmt.Println("key and val=",key,val)
+	// }
 
 }

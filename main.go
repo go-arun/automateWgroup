@@ -29,6 +29,16 @@ type Item struct {
 	IsUnitKg   bool // will display numbers/KG based on this, while listing items in user_index.html page
 }
 
+//CartItem ... to store cart items retrieved from Cokkies to Render
+type CartItem struct {
+	SLNo     int
+	Desc string
+	Qty      int
+	Rate     float64
+	Unit 	 string
+	SubTotal float64
+}
+
 func adjStock(c *gin.Context) {
 	itemID := c.PostForm("fish_name")
 	actualStock := c.PostForm("adj_qty")
@@ -276,14 +286,16 @@ func userSignupPost(c *gin.Context) {
 
 //items selected and moving to Orders page
 func userIndexPost(c *gin.Context) {
-	lastItmID := db.GetLastItemID() // iterating from 0 to lastItmID val, to track 
-									// the selcted items by user.( html select id names are itemIds)
-	for lastItmID > 0{ // Storing selected items as Cookie
-		if c.PostForm(strconv.Itoa(lastItmID)) != "Qty" && c.PostForm(strconv.Itoa(lastItmID)) != ""{
-		if db.Dbug {fmt.Println("Items Selected-:",c.PostForm(strconv.Itoa(lastItmID)))}
-			session.PushSelectionToCookie(c,strconv.Itoa(lastItmID),c.PostForm(strconv.Itoa(lastItmID)))
+	lastItmID := db.GetLastItemID() // iterating from 0 to lastItmID val, to track
+	// the selcted items by user.( html select id names are itemIds)
+	for lastItmID > 0 { // Storing selected items as Cookie
+		if c.PostForm(strconv.Itoa(lastItmID)) != "Qty" && c.PostForm(strconv.Itoa(lastItmID)) != "" {
+			if db.Dbug {
+				fmt.Println("Items Selected-:", c.PostForm(strconv.Itoa(lastItmID)))
+			}
+			session.PushSelectionToCookie(c, strconv.Itoa(lastItmID), c.PostForm(strconv.Itoa(lastItmID)))
 		}
-		lastItmID = lastItmID-1
+		lastItmID = lastItmID - 1
 	}
 
 	//Checking for any active sessions
@@ -291,7 +303,7 @@ func userIndexPost(c *gin.Context) {
 	if IsUsrSectionActive { // Moving to Orders page
 		fmt.Println("user asession is actice -- So Moving from landing page to Oreder ")
 		c.Redirect(http.StatusTemporaryRedirect, "/orders")
-		
+
 		c.Abort()
 		// c.HTML(
 		// 	http.StatusOK,
@@ -319,7 +331,7 @@ func userLoginGet(c *gin.Context) {
 	//Checking for any active sessions
 	IsUsrSectionActive := session.SessinStatus(c, "user_session_cookie")
 	if IsUsrSectionActive {
-		//Move to Orders Page TBD
+		//Move to Item lising page TBD
 	} else {
 		fmt.Println("No Active USR Sessions found ")
 		// c.HTML(http.StatusOK, "admin_login.html", []string{"a", "b", "c"})
@@ -375,7 +387,7 @@ func userOtpVerifyPost(c *gin.Context) {
 	}
 
 	//User Logged so Move to Orders Page
-	c.Redirect(http.StatusTemporaryRedirect,"/orders")
+	c.Redirect(http.StatusTemporaryRedirect, "/orders")
 	c.Abort()
 	// c.HTML(
 	// 	http.StatusOK,
@@ -393,7 +405,7 @@ func userLogoutGet(c *gin.Context) {
 
 }
 
-func userOrdersGet(c *gin.Context){
+func userOrdersGet(c *gin.Context) {
 	c.HTML(
 		http.StatusOK,
 		"orders.html",
@@ -402,7 +414,26 @@ func userOrdersGet(c *gin.Context){
 		},
 	)
 }
-func userOrdersPost(c *gin.Context){
+func userOrdersPost(c *gin.Context) {
+	cartItems := session.PullCartItemFromCookie(c) // Return a struct array of cart items retrived from Cookies
+	var singleCartItem CartItem
+	var fullCartItems []CartItem
+	for key, val := range cartItems { // range through the array contains the cookie(havning only icode and qty) and adding missing details from DB
+		singleCartItem.SLNo = key +1
+		singleCartItem.Qty,_ = strconv.Atoi(cartItems[key].IQty)
+		desc,rate,unit := db.GetItemDescAndRate(cartItems[key].ICode)
+		singleCartItem.Desc = desc
+		singleCartItem.Rate = rate
+		singleCartItem.Unit = unit
+		singleCartItem.SubTotal = singleCartItem.Qty * rate
+
+		fullCartItems = append (fullCartItems,singleCartItem)
+		fmt.Println(cartItems[key].ICode)
+		fmt.Println("key and val=", key, val)
+		
+		fmt.Println("Item details --->",rate,qty)
+	}
+
 	c.HTML(
 		http.StatusOK,
 		"orders.html",
@@ -412,6 +443,7 @@ func userOrdersPost(c *gin.Context){
 	)
 
 }
+
 // func otpGet(c *gin.Context) {
 // 	fmt.Println("Response -OTP-ID", smsapi.GenerateOTP("919846500400"))
 
@@ -445,8 +477,8 @@ func main() {
 	router.GET("/userlogin", userLoginGet)
 	router.POST("/userlogin", userLoginPost)
 	router.POST("/userotpverify", userOtpVerifyPost)
-	router.GET("/orders",userOrdersGet)
-	router.POST("/orders",userOrdersPost)
+	router.GET("/orders", userOrdersGet)
+	router.POST("/orders", userOrdersPost)
 	router.GET("/usrlogout", userLogoutGet)
 
 	// //TestCode

@@ -159,3 +159,18 @@ func GetLastItemID() (count int) {
 	}
 	return
 }
+//GetItemDescAndRate ... to prepate structure for rendering
+func GetItemDescAndRate(itemID string) (itemDesc string,itemRate float64,unit string) {
+	//strSQL := fmt.Sprintf("%s%s","SELECT item_desc,item_sel_price FROM item_master WHERE item_id=", itemID)
+	selDB, err := Connection.Query("SELECT item_desc,item_sel_price,item_unit FROM item_master WHERE item_id=" + itemID )
+	if err != nil {
+		panic(err.Error())
+	}
+	for selDB.Next() {
+		err = selDB.Scan(&itemDesc,&itemRate,&unit)
+		if err != nil {
+			panic(err.Error())
+		}
+	}
+	return
+}
