@@ -34,7 +34,8 @@ type CartItem struct {
 	SlNo     int
 	Desc string
 	Qty      int
-	Rate     float64
+	Rate     string
+	// Rate     float64
 	Unit 	 string
 	SubTotal float64
 }
@@ -418,18 +419,20 @@ func userOrdersPost(c *gin.Context) {
 	cartItems := session.PullCartItemFromCookie(c) // Return a struct array of cart items retrived from Cookies
 	var singleCartItem CartItem
 	var fullCartItems []CartItem
-	for key, _ := range cartItems { // range through the array contains the cookie(havning only icode and qty) and adding missing details from DB
+	var TotalAmt float64
+	for key := range cartItems { // range through the array contains the cookie(havning only icode and qty) and adding missing details from DB
 		singleCartItem.SlNo = key +1
 		singleCartItem.Qty,_ = strconv.Atoi(cartItems[key].IQty)
 		desc,rate,unit := db.GetItemDescAndRate(cartItems[key].ICode)
 		singleCartItem.Desc = desc
-		singleCartItem.Rate = rate
+		singleCartItem.Rate = fmt.Sprintf("%.2f",rate)
 		singleCartItem.Unit = unit
 		singleCartItem.SubTotal = float64(singleCartItem.Qty) * rate
 
 		fullCartItems = append (fullCartItems,singleCartItem)
 		fmt.Println(cartItems[key].ICode)
 		//fmt.Println("key and val=", key, val)
+		TotalAmt = TotalAmt + singleCartItem.SubTotal
 	}
 
 	c.HTML(
@@ -437,6 +440,7 @@ func userOrdersPost(c *gin.Context) {
 		"orders.html",
 		gin.H{"title": "User Login",
 		"ItemsOrdered": fullCartItems,
+		"TotalAmt"	  : TotalAmt,
 		},
 	)
 
