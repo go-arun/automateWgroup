@@ -31,13 +31,14 @@ type Item struct {
 
 //CartItem ... to store cart items retrieved from Cokkies to Render
 type CartItem struct {
-	SlNo     int
+	SlNo int
 	Desc string
-	Qty      int
-	Rate     string
+	Qty  int
+	Rate string
 	// Rate     float64
-	Unit 	 string
-	SubTotal float64
+	Unit     string
+	SubTotal string
+	// SubTotal float64
 }
 
 func adjStock(c *gin.Context) {
@@ -421,26 +422,27 @@ func userOrdersPost(c *gin.Context) {
 	var fullCartItems []CartItem
 	var TotalAmt float64
 	for key := range cartItems { // range through the array contains the cookie(havning only icode and qty) and adding missing details from DB
-		singleCartItem.SlNo = key +1
-		singleCartItem.Qty,_ = strconv.Atoi(cartItems[key].IQty)
-		desc,rate,unit := db.GetItemDescAndRate(cartItems[key].ICode)
+		singleCartItem.SlNo = key + 1
+		singleCartItem.Qty, _ = strconv.Atoi(cartItems[key].IQty)
+		desc, rate, unit := db.GetItemDescAndRate(cartItems[key].ICode)
 		singleCartItem.Desc = desc
-		singleCartItem.Rate = fmt.Sprintf("%.2f",rate)
+		singleCartItem.Rate = fmt.Sprintf("%.2f", rate)
 		singleCartItem.Unit = unit
-		singleCartItem.SubTotal = float64(singleCartItem.Qty) * rate
+		singleCartItem.SubTotal = fmt.Sprintf("%.2f", float64(singleCartItem.Qty)*rate)
 
-		fullCartItems = append (fullCartItems,singleCartItem)
+		fullCartItems = append(fullCartItems, singleCartItem)
 		fmt.Println(cartItems[key].ICode)
 		//fmt.Println("key and val=", key, val)
-		TotalAmt = TotalAmt + singleCartItem.SubTotal
+		subTotalToFloat, _ := strconv.ParseFloat(singleCartItem.SubTotal, 64)
+		TotalAmt = TotalAmt + subTotalToFloat
 	}
-
+	TotalAmtString := fmt.Sprintf("%.2f", TotalAmt)
 	c.HTML(
 		http.StatusOK,
 		"orders.html",
 		gin.H{"title": "User Login",
-		"ItemsOrdered": fullCartItems,
-		"TotalAmt"	  : TotalAmt,
+			"ItemsOrdered": fullCartItems,
+			"TotalAmt":     TotalAmtString,
 		},
 	)
 

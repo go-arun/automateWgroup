@@ -79,7 +79,24 @@
         </tr>
       </tbody>
     </table>
-    <div id="logout" onclick="location.href='http://debian:8080/usrlogout';" class="admn_buttons btn btn-primary m-1">Logout</div><br>
+    <div class="card float-right m-2" style="width: 18rem;">
+      <div class="card-body">
+        <h6 class="card-title"> Select Payment Mode</h6>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="paymentMode" id="cod" value="cod" checked>
+          <label class="form-check-label" for="exampleRadios1">
+            Cash On Delivery
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="paymentMode" id="online" value="online" >
+          <label class="form-check-label" for="exampleRadios1">
+            Online 
+          </label>
+        </div>
+      </div>
+    </div><br>
+    <div id="logout" onclick="location.href='http://debian:8080/usrlogout';" class="admn_buttons btn btn-primary mt-2 float-right">Confirm Order</div>
         <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
