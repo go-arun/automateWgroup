@@ -31,7 +31,7 @@ type Item struct {
 
 //CartItem ... to store cart items retrieved from Cokkies to Render
 type CartItem struct {
-	SLNo     int
+	SlNo     int
 	Desc string
 	Qty      int
 	Rate     float64
@@ -418,27 +418,25 @@ func userOrdersPost(c *gin.Context) {
 	cartItems := session.PullCartItemFromCookie(c) // Return a struct array of cart items retrived from Cookies
 	var singleCartItem CartItem
 	var fullCartItems []CartItem
-	for key, val := range cartItems { // range through the array contains the cookie(havning only icode and qty) and adding missing details from DB
-		singleCartItem.SLNo = key +1
+	for key, _ := range cartItems { // range through the array contains the cookie(havning only icode and qty) and adding missing details from DB
+		singleCartItem.SlNo = key +1
 		singleCartItem.Qty,_ = strconv.Atoi(cartItems[key].IQty)
 		desc,rate,unit := db.GetItemDescAndRate(cartItems[key].ICode)
 		singleCartItem.Desc = desc
 		singleCartItem.Rate = rate
 		singleCartItem.Unit = unit
-		singleCartItem.SubTotal = singleCartItem.Qty * rate
+		singleCartItem.SubTotal = float64(singleCartItem.Qty) * rate
 
 		fullCartItems = append (fullCartItems,singleCartItem)
 		fmt.Println(cartItems[key].ICode)
-		fmt.Println("key and val=", key, val)
-		
-		fmt.Println("Item details --->",rate,qty)
+		//fmt.Println("key and val=", key, val)
 	}
 
 	c.HTML(
 		http.StatusOK,
 		"orders.html",
 		gin.H{"title": "User Login",
-			"diplay": "none", // TBD make use of this logic to diplay error
+		"ItemsOrdered": fullCartItems,
 		},
 	)
 

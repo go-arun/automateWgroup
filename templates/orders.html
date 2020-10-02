@@ -62,9 +62,10 @@
         {{ range .ItemsOrdered }}
         <tr>
           <th scope="row">{{ .SlNo }}</th>
-          <td>{{ .ItmDesc }}</td>
-          <td>{{ .ItmQTY }}</td>
-          <td>{{ .ItmPrice }}</td>
+          <td>{{ .Desc }}</td>
+          <td>{{ .Qty }}</td>
+          <td>{{ .Unit }}</td>
+          <td>{{ .Rate }}</td>
           <td>{{ .SubTotal }}</td>
         </tr>
         {{ end }}
