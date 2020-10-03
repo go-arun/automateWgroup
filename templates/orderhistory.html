@@ -54,6 +54,7 @@
           <th scope="col">Order#</th>
           <th scope="col">Date&Time</th>
           <th scope="col">Amount</th>
+          <th scope="col">Payment Mode</th>
           <th scope="col">Order Staus</th>
         </tr>
       </thead>
@@ -63,6 +64,7 @@
           <th scope="row">{{ .OrdrNo }}</th>
           <td>{{ .DandTime }}</td>
           <td>{{ .Amount }}</td>
+          <td>{{ .Pmode }}</td>
           <td>{{ .OrderStatus }}</td>
         </tr>
         {{ end }}

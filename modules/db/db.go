@@ -201,3 +201,17 @@ func AddNewOrderEntry(custID int, orderAmt float64) (operationStatus bool,genera
 	}
 	return
 }
+//UpdateOrderDetails ...
+func UpdateOrderDetails(orderID,itemID,itemQty int) (operationStatus bool) {
+	insForm, err := Connection.Prepare(
+		"INSERT INTO order_detail(order_id,item_id,item_qty) VALUES (?,?,?)",
+	)
+	_, err = insForm.Exec(orderID, itemID,itemQty)
+	if err != nil {
+		fmt.Println(err)
+		return 
+	}
+	operationStatus = true
+	return
+
+}

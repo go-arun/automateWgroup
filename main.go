@@ -501,13 +501,17 @@ func orderHistoryPost(c *gin.Context){
 	if err != nil{
 		fmt.Println("Convertion errror: ",err)
 	}
-
 	_,newOrderID := db.AddNewOrderEntry(custID,totalToFloat)
-	//cartItems := session.PullCartItemFromCookie(c)
-	fmt.Println("OVER...OrderID->.&Amount:",newOrderID,totalToFloat)
-	// for key := range cartItems {
-
-	// }
+	cartItems := session.PullCartItemFromCookie(c)
+	 for key := range cartItems {
+		iCode, _ := strconv.Atoi(cartItems[key].ICode)
+		iQty, _ := strconv.Atoi(cartItems[key].IQty)
+		fmt.Println("icode and iqty",iCode,iQty)
+		okay := db.UpdateOrderDetails(newOrderID,iCode,iQty)
+		if !okay{
+			fmt.Println("Error in inserting to Order details ....")
+		}
+	 }
 
 }
 
