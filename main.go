@@ -472,10 +472,17 @@ func orderconfirmPost(c *gin.Context){
 		if err != nil {
 			fmt.Println(err)
 		}
-		fmt.Println("body:",body)
+		if db.Dbug { fmt.Println("body RazorPay Response with order_id :",body)}
 		RPayOrderID := body["id"]
 		fmt.Println("RPayOrderID:", RPayOrderID)
-
+		c.HTML(
+			http.StatusOK,
+			"payment.html",
+			gin.H{"title": "User Login",
+				"RPayOrderID": RPayOrderID,
+				"amtInPaisa":  amtInPaisa,
+			},
+		)
 
 	}
 }
@@ -504,7 +511,7 @@ func main() {
 	router.GET("/orders", userOrdersGet)
 	router.POST("/orders", userOrdersPost)
 	router.GET("/usrlogout", userLogoutGet)
-	router.POST("/orderconfirm",orderconfirmPost)
+	router.POST("/orderconfirm",orderconfirmPost) //Once order Confirmed from /orders , it comes here
 
 	// //TestCode
 	// router.GET("/otp", otpGet)
