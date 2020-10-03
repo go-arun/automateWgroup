@@ -42,10 +42,7 @@ type CartItem struct {
 	// SubTotal float64
 }
 
-func covertAmtToPasia(amt string)( string){
-	amtIn
-	return strconv.itoa(strconv.Atoi(amt) * 100)
-}
+
 
 func adjStock(c *gin.Context) {
 	itemID := c.PostForm("fish_name")
@@ -442,6 +439,8 @@ func userOrdersPost(c *gin.Context) {
 		subTotalToFloat, _ := strconv.ParseFloat(singleCartItem.SubTotal, 64)
 		TotalAmt = TotalAmt + subTotalToFloat
 	}
+	TotalAmtInPaisa := TotalAmt * 100 // This is required while initate for payment in Razorpay
+
 	TotalAmtString := fmt.Sprintf("%.2f", TotalAmt)
 	c.HTML(
 		http.StatusOK,
@@ -449,6 +448,7 @@ func userOrdersPost(c *gin.Context) {
 		gin.H{"title": "User Login",
 			"ItemsOrdered": fullCartItems,
 			"TotalAmt":     TotalAmtString,
+			"TotalAmtInPaisa" :  TotalAmtInPaisa,
 		},
 	)
 
@@ -456,14 +456,12 @@ func userOrdersPost(c *gin.Context) {
 
 func orderconfirmPost(c *gin.Context){
 	fmt.Println(c.PostForm("paymentMode"))
-	amt := (c.PostForm("totalamt"))
-	fmt.Printf("Type-->%T",amt)
-	amtInPaisa := covertAmtToPasia(c.PostForm("totalamt"))
-
-	if c.PostForm("paymentMode") == "onoline"{
+	//amt := (c.PostForm("totalamt"))
+	amtInPaisa,_ := strconv.Atoi(c.PostForm("amt_inPaisa"))
+	if c.PostForm("paymentMode") == "online"{
 		client := razorpay.NewClient("rzp_test_zlsYsrvuUxxhln", "9LtUy4qpLCOtl4Gz2asp59es")
 		data := map[string]interface{}{
-			"amount":          1234,
+			"amount":          amtInPaisa,
 			"currency":        "INR",
 			"receipt":      	"110",
 			// "receipt":      "some_receipt_id",
@@ -474,7 +472,10 @@ func orderconfirmPost(c *gin.Context){
 		if err != nil {
 			fmt.Println(err)
 		}
-		fmt.Println(body)
+		fmt.Println("body:",body)
+		RPayOrderID := body["id"]
+		fmt.Println("RPayOrderID:", RPayOrderID)
+
 
 	}
 }
