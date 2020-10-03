@@ -124,13 +124,13 @@ func TraceTempSIDinDB(sessCookie string) (sessStatus bool) {
 }
 
 //TraceUserWithSIDinDB ...
-func TraceUserWithSIDinDB(sessCookie string) (sessStatus bool, custMob int, custName, custAdr1, custAdr2 string) {
-	selDB, err := Connection.Query("SELECT cust_name,cust_mob,cust_adr1,cust_adr2 FROM cust_master WHERE cust_sesid = '" + sessCookie + "' ")
+func TraceUserWithSIDinDB(sessCookie string) (sessStatus bool, custMob int, custName, custAdr1, custAdr2 string,custID int) {
+	selDB, err := Connection.Query("SELECT cust_name,cust_mob,cust_adr1,cust_adr2,cust_id FROM cust_master WHERE cust_sesid = '" + sessCookie + "' ")
 	if err != nil {
 		panic(err.Error())
 	}
 	for selDB.Next() {
-		err = selDB.Scan(&custName, &custMob, &custAdr1, &custAdr2)
+		err = selDB.Scan(&custName, &custMob, &custAdr1, &custAdr2,&custID)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -174,4 +174,29 @@ func GetItemDescAndRate(itemID string) (itemDesc string, itemRate float64, unit 
 		}
 	}
 	return
+}
+//AddNewOrderEntry ... 
+func AddNewOrderEntry(custID int, orderAmt float64) (operationStatus bool,generatedOrderID int) {
+	insForm, err := Connection.Prepare(
+		"INSERT INTO order_master(order_id,order_amt) VALUES (?,?)",
+	)
+	_, err = insForm.Exec(custID, orderAmt)
+	if err != nil {
+		fmt.Println(err)
+		return 
+	}
+
+		//Geting last crated ID
+	selDB, err := Connection.Query("SELECT max(item_id) FROM item_master")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	for selDB.Next() {
+		err = selDB.Scan(&generatedOrderID)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+	}
 }

@@ -42,8 +42,6 @@ type CartItem struct {
 	// SubTotal float64
 }
 
-
-
 func adjStock(c *gin.Context) {
 	itemID := c.PostForm("fish_name")
 	actualStock := c.PostForm("adj_qty")
@@ -456,7 +454,7 @@ func userOrdersPost(c *gin.Context) {
 
 func orderconfirmPost(c *gin.Context){
 	sessionCookie, _ := c.Cookie("user_session_cookie")
-	_,cMo,cNme,cAdr1,cAdr2 := db.TraceUserWithSIDinDB(sessionCookie)
+	_,cMo,cNme,cAdr1,cAdr2,_ := db.TraceUserWithSIDinDB(sessionCookie)
 	amtInPaisa,_ := strconv.Atoi(c.PostForm("amt_inPaisa")) //Eg 24545
 	totalamt := c.PostForm("totalamt") // in noraml foramt Eg 245.45
 	if c.PostForm("paymentMode") == "online"{
@@ -493,7 +491,18 @@ func orderconfirmPost(c *gin.Context){
 	}
 }
 
+func orderHistoryGet(c *gin.Context){
+	//Insert Current Order Items to DB
+	sessionCookie, _ := c.Cookie("user_session_cookie")
+	_,_,_,_,_,custID := db.TraceUserWithSIDinDB(sessionCookie)
+	_,newOrderID := db.AddNewOrderEntry(custID,)
+	cartItems := session.PullCartItemFromCookie(c)
 
+	for key := range cartItems {
+
+	}
+
+}
 
 func main() {
 	db.Connect() //db Connection
@@ -518,6 +527,7 @@ func main() {
 	router.POST("/orders", userOrdersPost)
 	router.GET("/usrlogout", userLogoutGet)
 	router.POST("/orderconfirm",orderconfirmPost) //Once order Confirmed from /orders , it comes here
+	router.GET("/orderhistory",orderHistoryGet)
 
 	// //TestCode
 	// router.GET("/otp", otpGet)
