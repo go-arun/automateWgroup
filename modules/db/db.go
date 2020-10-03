@@ -124,22 +124,22 @@ func TraceTempSIDinDB(sessCookie string) (sessStatus bool) {
 }
 
 //TraceUserWithSIDinDB ...
-func TraceUserWithSIDinDB(sessCookie string) (sessStatus bool, custName string) {
-	selDB, err := Connection.Query("SELECT cust_name FROM cust_master WHERE cust_sesid = '" + sessCookie + "' ")
+func TraceUserWithSIDinDB(sessCookie string) (sessStatus bool, custMob int, custName, custAdr1, custAdr2 string) {
+	selDB, err := Connection.Query("SELECT cust_name,cust_mob,cust_adr1,cust_adr2 FROM cust_master WHERE cust_sesid = '" + sessCookie + "' ")
 	if err != nil {
 		panic(err.Error())
 	}
 	for selDB.Next() {
-		err = selDB.Scan(&custName)
+		err = selDB.Scan(&custName, &custMob, &custAdr1, &custAdr2)
 		if err != nil {
 			panic(err.Error())
 		}
 	}
 	if custName != "" {
 		sessStatus = true
-		return sessStatus, custName
+		return
 	}
-	return sessStatus, custName
+	return
 }
 
 //GetLastItemID ...  Item ID is the name of slecet tag in html, so
@@ -159,15 +159,16 @@ func GetLastItemID() (count int) {
 	}
 	return
 }
+
 //GetItemDescAndRate ... to prepate structure for rendering
-func GetItemDescAndRate(itemID string) (itemDesc string,itemRate float64,unit string) {
+func GetItemDescAndRate(itemID string) (itemDesc string, itemRate float64, unit string) {
 	//strSQL := fmt.Sprintf("%s%s","SELECT item_desc,item_sel_price FROM item_master WHERE item_id=", itemID)
-	selDB, err := Connection.Query("SELECT item_desc,item_sel_price,item_unit FROM item_master WHERE item_id=" + itemID )
+	selDB, err := Connection.Query("SELECT item_desc,item_sel_price,item_unit FROM item_master WHERE item_id=" + itemID)
 	if err != nil {
 		panic(err.Error())
 	}
 	for selDB.Next() {
-		err = selDB.Scan(&itemDesc,&itemRate,&unit)
+		err = selDB.Scan(&itemDesc, &itemRate, &unit)
 		if err != nil {
 			panic(err.Error())
 		}

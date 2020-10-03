@@ -169,7 +169,7 @@ func SessinStatus(c *gin.Context, cookieName string) (sesStatus bool) {
 	if cookieName == "admin_session_cookie" { // divert here based on which sesid user/admin
 		sesStatus, _ = db.TraceAdminWithSIDinDB(sessionCookie)
 	} else if cookieName == "user_session_cookie" {
-		sesStatus, _ = db.TraceUserWithSIDinDB(sessionCookie)
+		sesStatus, _,_,_,_ = db.TraceUserWithSIDinDB(sessionCookie)
 	} else { // then it is about temp_sesid go ahed
 		sesStatus = db.TraceTempSIDinDB(sessionCookie)
 	}

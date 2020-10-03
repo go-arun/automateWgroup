@@ -455,9 +455,10 @@ func userOrdersPost(c *gin.Context) {
 }
 
 func orderconfirmPost(c *gin.Context){
-	fmt.Println(c.PostForm("paymentMode"))
-	//amt := (c.PostForm("totalamt"))
-	amtInPaisa,_ := strconv.Atoi(c.PostForm("amt_inPaisa"))
+	sessionCookie, _ := c.Cookie("user_session_cookie")
+	_,cMo,cNme,cAdr1,cAdr2 := db.TraceUserWithSIDinDB(sessionCookie)
+	amtInPaisa,_ := strconv.Atoi(c.PostForm("amt_inPaisa")) //Eg 24545
+	totalamt := c.PostForm("totalamt") // in noraml foramt Eg 245.45
 	if c.PostForm("paymentMode") == "online"{
 		client := razorpay.NewClient("rzp_test_zlsYsrvuUxxhln", "9LtUy4qpLCOtl4Gz2asp59es")
 		data := map[string]interface{}{
@@ -481,6 +482,11 @@ func orderconfirmPost(c *gin.Context){
 			gin.H{"title": "User Login",
 				"RPayOrderID": RPayOrderID,
 				"amtInPaisa":  amtInPaisa,
+				"UserName" : cNme,
+				"Mobile" : cMo,
+				"DelAddr" : cAdr1+cAdr2,
+				"TotalAmt" : totalamt,
+
 			},
 		)
 
