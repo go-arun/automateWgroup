@@ -475,7 +475,7 @@ func orderconfirmPost(c *gin.Context){
 		}
 		if db.Dbug { fmt.Println("body RazorPay Response with order_id :",body)}
 		RPayOrderID := body["id"]
-		fmt.Println("RPayOrderID:", RPayOrderID)
+		fmt.Println("RPayOrderID--->:", RPayOrderID)
 		c.HTML(
 			http.StatusOK,
 			"payment.html",

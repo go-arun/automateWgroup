@@ -37,9 +37,11 @@ var options = {
     "image": "https://example.com/your_logo",
     "order_id": "{{ .RPayOrderID }}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
     "handler": function (response){
-        alert(response.razorpay_payment_id);
-        alert(response.razorpay_order_id);
-        alert(response.razorpay_signature)
+        // alert(response.razorpay_payment_id); TBD , Utilize signaute to check payment status later
+        //  alert(response.razorpay_order_id);
+        //  alert(response.razorpay_signature)
+        alert("Payment Successful!!!")
+        location.replace("http://debian:8080/")
     },
     "prefill": {
         "name": {{.UserName}},
