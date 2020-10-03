@@ -178,7 +178,7 @@ func GetItemDescAndRate(itemID string) (itemDesc string, itemRate float64, unit 
 //AddNewOrderEntry ... 
 func AddNewOrderEntry(custID int, orderAmt float64) (operationStatus bool,generatedOrderID int) {
 	insForm, err := Connection.Prepare(
-		"INSERT INTO order_master(order_id,order_amt) VALUES (?,?)",
+		"INSERT INTO order_master(cust_id,order_amt) VALUES (?,?)",
 	)
 	_, err = insForm.Exec(custID, orderAmt)
 	if err != nil {
@@ -187,7 +187,7 @@ func AddNewOrderEntry(custID int, orderAmt float64) (operationStatus bool,genera
 	}
 
 		//Geting last crated ID
-	selDB, err := Connection.Query("SELECT max(item_id) FROM item_master")
+	selDB, err := Connection.Query("SELECT max(order_id) FROM order_master")
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -199,4 +199,5 @@ func AddNewOrderEntry(custID int, orderAmt float64) (operationStatus bool,genera
 			return
 		}
 	}
+	return
 }

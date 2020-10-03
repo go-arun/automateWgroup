@@ -11,6 +11,7 @@
     <title>{{.title}}</title>
   </head>
   <body>
+    <form id="orderForm" action="/orderhistory" method="POST">
       <div class="container mt-5">
         <div class="card" style="width: 28rem;">
             <div class="card-body">
@@ -18,10 +19,12 @@
               <label for="MobileNumber">Mobile :{{.Mobile}}</label><br>
               <label for="Delivery Addr">Delivery Addr :{{.DelAddr}}</label><br>
               <label for="Amount">Amount :{{.TotalAmt}}</label><br>
+              <input name="orderAmt" type="text" value="{{.TotalAmt}}" >
               <button class="btn bg-primary float-right" id="rzp-button1">Pay Now</button>
             </div>
         </div>
       </div>
+    </form>
 
     
 
@@ -41,7 +44,7 @@ var options = {
         //  alert(response.razorpay_order_id);
         //  alert(response.razorpay_signature)
         alert("Payment Successful!!!")
-        location.replace("http://debian:8080/orderhistory")
+        document.getElementById("orderForm").submit()
     },
     "prefill": {
         "name": {{.UserName}},

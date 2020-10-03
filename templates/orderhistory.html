@@ -51,33 +51,21 @@
     <table class="table mt-5">
       <thead>
         <tr>
-          <th scope="col">#</th>
-          <th scope="col">Item Description </th>
-          <th scope="col">Quandity</th>
-          <th scope="col">Unit</th>
-          <th scope="col">Price</th>
-          <th scope="col">Sub Total</th>
+          <th scope="col">Order#</th>
+          <th scope="col">Date&Time</th>
+          <th scope="col">Amount</th>
+          <th scope="col">Order Staus</th>
         </tr>
       </thead>
       <tbody>
-        {{ range .ItemsOrdered }}
+        {{ range .OrderHistrory }}
         <tr>
-          <th scope="row">{{ .SlNo }}</th>
-          <td>{{ .Desc }}</td>
-          <td>{{ .Qty }}</td>
-          <td>{{ .Unit }}</td>
-          <td>{{ .Rate }}</td>
-          <td>{{ .SubTotal }}</td>
+          <th scope="row">{{ .OrdrNo }}</th>
+          <td>{{ .DandTime }}</td>
+          <td>{{ .Amount }}</td>
+          <td>{{ .OrderStatus }}</td>
         </tr>
         {{ end }}
-        <tr>
-          <th scope="row"></th>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td><input name="amt_inPaisa" type="text" class="border-0" value="{{ .TotalAmtInPaisa }}" style="display: none;"></td>
-          <td> <input name="totalamt" type="text" class="border-0" value="{{ .TotalAmt }}"></td>
-        </tr>
       </tbody>
     </table>
     <div class="card float-right m-2" style="width: 18rem;">

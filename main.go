@@ -491,16 +491,23 @@ func orderconfirmPost(c *gin.Context){
 	}
 }
 
-func orderHistoryGet(c *gin.Context){
+func orderHistoryPost(c *gin.Context){
 	//Insert Current Order Items to DB
 	sessionCookie, _ := c.Cookie("user_session_cookie")
 	_,_,_,_,_,custID := db.TraceUserWithSIDinDB(sessionCookie)
-	_,newOrderID := db.AddNewOrderEntry(custID,)
-	cartItems := session.PullCartItemFromCookie(c)
-
-	for key := range cartItems {
-
+	 toatlInString := c.PostForm("orderAmt")
+	 fmt.Println("toatlInString Vql:->",toatlInString)
+	totalToFloat, err := strconv.ParseFloat(toatlInString, 64)
+	if err != nil{
+		fmt.Println("Convertion errror: ",err)
 	}
+
+	_,newOrderID := db.AddNewOrderEntry(custID,totalToFloat)
+	//cartItems := session.PullCartItemFromCookie(c)
+	fmt.Println("OVER...OrderID->.&Amount:",newOrderID,totalToFloat)
+	// for key := range cartItems {
+
+	// }
 
 }
 
@@ -527,7 +534,7 @@ func main() {
 	router.POST("/orders", userOrdersPost)
 	router.GET("/usrlogout", userLogoutGet)
 	router.POST("/orderconfirm",orderconfirmPost) //Once order Confirmed from /orders , it comes here
-	router.GET("/orderhistory",orderHistoryGet)
+	router.POST("/orderhistory",orderHistoryPost)
 
 	// //TestCode
 	// router.GET("/otp", otpGet)
