@@ -47,6 +47,7 @@
       </div>
   </nav>
     <!--NavBarEnd  -->
+    <form  class="form-block pb-3" action="/orderconfirm" method="POST">
     <table class="table mt-5">
       <thead>
         <tr>
@@ -75,7 +76,7 @@
           <td></td>
           <td></td>
           <td></td>
-          <td>Total:{{ .TotalAmt }}</td>
+          <td> <input name="totalamt" type="text" class="border-0" value="Total:{{ .TotalAmt }}"></td>
         </tr>
       </tbody>
     </table>
@@ -96,7 +97,9 @@
         </div>
       </div>
     </div><br>
-    <div id="logout" onclick="location.href='http://debian:8080/usrlogout';" class="admn_buttons btn btn-primary mt-2 float-right">Confirm Order</div>
+    <!-- <div id="logout" onclick="location.href='http://debian:8080/usrlogout';" class="admn_buttons btn btn-primary mt-2 float-right">Confirm Order</div> -->
+    <input class="btn bg-primary float-right m-4" type="submit" value="Confirm Order">
+    </form>
         <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>

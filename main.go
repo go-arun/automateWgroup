@@ -13,6 +13,7 @@ import (
 	"github.com/go-arun/fishrider/modules/fileoperation"
 	"github.com/go-arun/fishrider/modules/session"
 	"github.com/go-arun/fishrider/modules/smsapi"
+	razorpay "github.com/razorpay/razorpay-go"
 )
 
 // to store otp_id received from SMS API Provider
@@ -39,6 +40,11 @@ type CartItem struct {
 	Unit     string
 	SubTotal string
 	// SubTotal float64
+}
+
+func covertAmtToPasia(amt string)( string){
+	amtIn
+	return strconv.itoa(strconv.Atoi(amt) * 100)
 }
 
 func adjStock(c *gin.Context) {
@@ -448,20 +454,33 @@ func userOrdersPost(c *gin.Context) {
 
 }
 
-// func otpGet(c *gin.Context) {
-// 	fmt.Println("Response -OTP-ID", smsapi.GenerateOTP("919846500400"))
+func orderconfirmPost(c *gin.Context){
+	fmt.Println(c.PostForm("paymentMode"))
+	amt := (c.PostForm("totalamt"))
+	fmt.Printf("Type-->%T",amt)
+	amtInPaisa := covertAmtToPasia(c.PostForm("totalamt"))
 
-// 	//fmt.Println(smsapi.VerifyOTP("08b7e0e6-5c76-4d15-aa41-90785fc4f831","206272"))
+	if c.PostForm("paymentMode") == "onoline"{
+		client := razorpay.NewClient("rzp_test_zlsYsrvuUxxhln", "9LtUy4qpLCOtl4Gz2asp59es")
+		data := map[string]interface{}{
+			"amount":          1234,
+			"currency":        "INR",
+			"receipt":      	"110",
+			// "receipt":      "some_receipt_id",
+		}
+		//var emptyMap = map[string]string{}
+		hsh := make(map[string]string)
+		body, err := client.Order.Create(data,hsh)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println(body)
 
-// }
+	}
+}
 
-// func skGet(c *gin.Context){
-// 	session.PushSelectionToCookie(c,"1","10")
-// 	session.PushSelectionToCookie(c,"1","10")
-// }
-// func gkGet(c *gin.Context){
-// 	session.PullCartItemFromCookie(c)
-// }
+
+
 func main() {
 	db.Connect() //db Connection
 	router := gin.Default()
@@ -484,6 +503,7 @@ func main() {
 	router.GET("/orders", userOrdersGet)
 	router.POST("/orders", userOrdersPost)
 	router.GET("/usrlogout", userLogoutGet)
+	router.POST("/orderconfirm",orderconfirmPost)
 
 	// //TestCode
 	// router.GET("/otp", otpGet)
