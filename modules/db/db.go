@@ -30,6 +30,15 @@ type order struct {
 	PayMode string
 }
 
+type ord struct { // using only while fetching single order details for user
+	ID    int
+	Desc  string
+	Price float64
+	Unit  string
+	Qty   int
+}
+type itemsInSingleOrder []ord
+
 //Orders ... to collect Order details to show in order History of user.
 type Orders []order
 
@@ -254,4 +263,34 @@ func GetOrderHistory(custID int) (operationStatus bool, UsrOrderHistory Orders) 
 	operationStatus = true // all went well ..
 	return
 
+}
+
+func getSingleOredrDetails(OrderID int) (operationStatus bool, itmsInOrder itemsInSingleOrder, date, ordStatus, PayMode string, amt float64) {
+	selDB, err := Connection.Query("SELECT order_date,order_status,order_amt,p_mode from order_master WHERE order_id= " + strconv.Itoa(OrderID))
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	for selDB.Next() {
+		err = selDB.Scan(&date, &ordStatus, &amt, &PayMode)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+	}
+
+	//Now Collect Multtiple Items ( maye contain single item only in one order :) , in this order
+	selDB, err = Connection.Query("select order_detail.item_id,item_master.item_desc,item_master.item_sel_price,item_master.item_unit,order_detail.item_qty FROM order_master INNER JOIN order_detail ON order_master.order_id = order_detail.order_id INNER JOIN item_master ON order_detail.item_id = item_master.item_id WHERE order_master.order_id=" + strconv.Itoa(OrderID))
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	for selDB.Next() {
+		err = selDB.Scan(&date, &ordStatus, &amt, &PayMode)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+	}
+	return
 }

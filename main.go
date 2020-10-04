@@ -220,6 +220,9 @@ func logoutGet(c *gin.Context) {
 }
 
 func userIndexGet(c *gin.Context) {
+	//For safer side alway clear cart 
+	session.Cart = nil
+
 	selDB, err := db.Connection.Query("SELECT item_id,item_desc,item_unit,item_stock,item_sel_price FROM item_master WHERE item_stock > 0")
 	if err != nil {
 		panic(err.Error())
@@ -417,7 +420,7 @@ func userOrdersGet(c *gin.Context) {
 		},
 	)
 }
-func userOrdersPost(c *gin.Context) {
+func userOrdersPost(c *gin.Context) {  // Redirected from IndexpagePost event 
 	cartItems := session.PullCartItemFromCookie(c) // Return a struct array of cart items retrived from Cookies
 	var singleCartItem CartItem
 	var fullCartItems []CartItem
@@ -452,7 +455,7 @@ func userOrdersPost(c *gin.Context) {
 
 }
 
-func orderconfirmPost(c *gin.Context) {
+func orderconfirmPost(c *gin.Context) { // Execuet this after selecting payment mode ( Confirm Order)
 	sessionCookie, _ := c.Cookie("user_session_cookie")
 	_, cMo, cNme, cAdr1, cAdr2, _ := db.TraceUserWithSIDinDB(sessionCookie)
 	amtInPaisa, _ := strconv.Atoi(c.PostForm("amt_inPaisa")) //Eg 24545
@@ -492,7 +495,7 @@ func orderconfirmPost(c *gin.Context) {
 	}
 }
 
-func orderHistoryPost(c *gin.Context) {
+func orderHistoryPost(c *gin.Context) { //Will execute this After placing an order(& payment) 
 	//Insert Current Order details to to DB
 	sessionCookie, _ := c.Cookie("user_session_cookie")
 	_, _, _, _, _, custID := db.TraceUserWithSIDinDB(sessionCookie)
@@ -531,6 +534,42 @@ func orderHistoryPost(c *gin.Context) {
 		},
 	)
 
+
+}
+// To disply any particulr Order 
+func viewAnyOrderGet(c *gin.Context) { 
+
+	cartItems := session.PullCartItemFromCookie(c) // Return a struct array of cart items retrived from Cookies
+	var singleCartItem CartItem
+	var fullCartItems []CartItem
+	var TotalAmt float64
+	for key := range cartItems { // range through the array contains the cookie(havning only icode and qty) and adding missing details from DB
+		singleCartItem.SlNo = key + 1
+		singleCartItem.Qty, _ = strconv.Atoi(cartItems[key].IQty)
+		desc, rate, unit := db.GetItemDescAndRate(cartItems[key].ICode)
+		singleCartItem.Desc = desc
+		singleCartItem.Rate = fmt.Sprintf("%.2f", rate)
+		singleCartItem.Unit = unit
+		singleCartItem.SubTotal = fmt.Sprintf("%.2f", float64(singleCartItem.Qty)*rate)
+
+		fullCartItems = append(fullCartItems, singleCartItem)
+		fmt.Println(cartItems[key].ICode)
+		//fmt.Println("key and val=", key, val)
+		subTotalToFloat, _ := strconv.ParseFloat(singleCartItem.SubTotal, 64)
+		TotalAmt = TotalAmt + subTotalToFloat
+	}
+	TotalAmtInPaisa := TotalAmt * 100 // This is required while initate for payment in Razorpay
+
+	TotalAmtString := fmt.Sprintf("%.2f", TotalAmt)
+	c.HTML(
+		http.StatusOK,
+		"orders.html",
+		gin.H{"title": "User Login",
+			"ItemsOrdered":    fullCartItems,
+			"TotalAmt":        TotalAmtString,
+			"TotalAmtInPaisa": TotalAmtInPaisa,
+		},
+	)
 
 }
 
