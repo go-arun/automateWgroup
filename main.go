@@ -444,34 +444,36 @@ func userOrdersPost(c *gin.Context) {
 		http.StatusOK,
 		"orders.html",
 		gin.H{"title": "User Login",
-			"ItemsOrdered": fullCartItems,
-			"TotalAmt":     TotalAmtString,
-			"TotalAmtInPaisa" :  TotalAmtInPaisa,
+			"ItemsOrdered":    fullCartItems,
+			"TotalAmt":        TotalAmtString,
+			"TotalAmtInPaisa": TotalAmtInPaisa,
 		},
 	)
 
 }
 
-func orderconfirmPost(c *gin.Context){
+func orderconfirmPost(c *gin.Context) {
 	sessionCookie, _ := c.Cookie("user_session_cookie")
-	_,cMo,cNme,cAdr1,cAdr2,_ := db.TraceUserWithSIDinDB(sessionCookie)
-	amtInPaisa,_ := strconv.Atoi(c.PostForm("amt_inPaisa")) //Eg 24545
-	totalamt := c.PostForm("totalamt") // in noraml foramt Eg 245.45
-	if c.PostForm("paymentMode") == "online"{
+	_, cMo, cNme, cAdr1, cAdr2, _ := db.TraceUserWithSIDinDB(sessionCookie)
+	amtInPaisa, _ := strconv.Atoi(c.PostForm("amt_inPaisa")) //Eg 24545
+	totalamt := c.PostForm("totalamt")                       // in noraml foramt Eg 245.45
+	if c.PostForm("paymentMode") == "online" {
 		client := razorpay.NewClient("rzp_test_zlsYsrvuUxxhln", "9LtUy4qpLCOtl4Gz2asp59es")
 		data := map[string]interface{}{
-			"amount":          amtInPaisa,
-			"currency":        "INR",
-			"receipt":      	"110",
+			"amount":   amtInPaisa,
+			"currency": "INR",
+			"receipt":  "110",
 			// "receipt":      "some_receipt_id",
 		}
 		//var emptyMap = map[string]string{}
 		hsh := make(map[string]string)
-		body, err := client.Order.Create(data,hsh)
+		body, err := client.Order.Create(data, hsh)
 		if err != nil {
 			fmt.Println(err)
 		}
-		if db.Dbug { fmt.Println("body RazorPay Response with order_id :",body)}
+		if db.Dbug {
+			fmt.Println("body RazorPay Response with order_id :", body)
+		}
 		RPayOrderID := body["id"]
 		fmt.Println("RPayOrderID--->:", RPayOrderID)
 		c.HTML(
@@ -480,51 +482,54 @@ func orderconfirmPost(c *gin.Context){
 			gin.H{"title": "User Login",
 				"RPayOrderID": RPayOrderID,
 				"amtInPaisa":  amtInPaisa,
-				"UserName" : cNme,
-				"Mobile" : cMo,
-				"DelAddr" : cAdr1+cAdr2,
-				"TotalAmt" : totalamt,
-
+				"UserName":    cNme,
+				"Mobile":      cMo,
+				"DelAddr":     cAdr1 + cAdr2,
+				"TotalAmt":    totalamt,
 			},
 		)
 
 	}
 }
 
-func orderHistoryPost(c *gin.Context){
+func orderHistoryPost(c *gin.Context) {
 	//Insert Current Order details to to DB
 	sessionCookie, _ := c.Cookie("user_session_cookie")
-	_,_,_,_,_,custID := db.TraceUserWithSIDinDB(sessionCookie)
-	 toatlInString := c.PostForm("orderAmt")
-	 fmt.Println("toatlInString Vql:->",toatlInString)
+	_, _, _, _, _, custID := db.TraceUserWithSIDinDB(sessionCookie)
+	toatlInString := c.PostForm("orderAmt")
+	fmt.Println("toatlInString Vql:->", toatlInString)
 	totalToFloat, err := strconv.ParseFloat(toatlInString, 64)
-	if err != nil{
-		fmt.Println("Convertion errror: ",err)
+	if err != nil {
+		fmt.Println("Convertion errror: ", err)
 	}
-	_,newOrderID := db.AddNewOrderEntry(custID,totalToFloat)
+	_, newOrderID := db.AddNewOrderEntry(custID, totalToFloat)
 	cartItems := session.PullCartItemFromCookie(c)
-	 for key := range cartItems {
+	for key := range cartItems {
 		iCode, _ := strconv.Atoi(cartItems[key].ICode)
 		iQty, _ := strconv.Atoi(cartItems[key].IQty)
-		fmt.Println("icode and iqty",iCode,iQty)
-		okay := db.UpdateOrderDetails(newOrderID,iCode,iQty)
-		if !okay{
+		fmt.Println("icode and iqty", iCode, iQty)
+		okay := db.UpdateOrderDetails(newOrderID, iCode, iQty)
+		if !okay {
 			fmt.Println("Error in inserting to Order details ....")
 		}
-	 }
+	}
+	//Now safe to remove cart entries in Cookies
+	session.RemoveCookie(c,"user_cart")
 
-	 //Collecting all Order details to show 
-	 oK,UserOrderHosory := db.GetOrderHistory(custID)
-		 if !oK{
-			 fmt.Println("Something is went wrong while collecting order details !!")
-		 }
-		c.HTML(
-			http.StatusOK,
-			"orderhistory.html",
-			gin.H{"title": "User Login",
-				  "OrderHistrory" : UserOrderHosory,
-			},
-		)
+	//Collecting all Order details to show
+	oK, UserOrderHosory := db.GetOrderHistory(custID)
+	if !oK {
+		fmt.Println("Something is went wrong while collecting order details !!")
+	}
+	c.HTML(
+		http.StatusOK,
+		"orderhistory.html",
+		gin.H{"title": "User Login",
+			"OrderHistrory": UserOrderHosory,
+		},
+	)
+
+
 }
 
 func main() {
@@ -549,8 +554,8 @@ func main() {
 	router.GET("/orders", userOrdersGet)
 	router.POST("/orders", userOrdersPost)
 	router.GET("/usrlogout", userLogoutGet)
-	router.POST("/orderconfirm",orderconfirmPost) //Once order Confirmed from /orders , it comes here
-	router.POST("/orderhistory",orderHistoryPost)
+	router.POST("/orderconfirm", orderconfirmPost) //Once order Confirmed from /orders , it comes here
+	router.POST("/orderhistory", orderHistoryPost)
 
 	// //TestCode
 	// router.GET("/otp", otpGet)

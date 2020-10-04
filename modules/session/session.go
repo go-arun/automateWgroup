@@ -95,12 +95,18 @@ func RemoveUserSessionIDFromDB(c *gin.Context) {
 	}
 	insForm.Exec(sessionCookie)
 	// Deleting cookie
-	c.SetCookie("user_session_cookie",
-		"",
-		-1, // delete now !!
-		"/",
-		"", false, false,
-	)
+	RemoveCookie(c,"user_session_cookie")
+
+}
+//RemoveCookie ...
+func RemoveCookie(c *gin.Context, cookieName string){
+	c.SetCookie(cookieName,
+	"",
+	-1, // delete now !!
+	"/",
+	"", false, false,
+)
+
 }
 
 //HashPassword ..
