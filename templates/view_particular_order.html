@@ -22,7 +22,7 @@
       <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav">
           <li class="nav-item active">
-            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+            <a class="nav-link" href="http://debian:8080/">Home <span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">Orders</a>
@@ -49,7 +49,7 @@
     <!--NavBarEnd  -->
     
     <form  class="form-block pb-3" action="/orderconfirm" method="POST">
-      <div class="card float-right mt-5 m-2" style="width: 18rem;">
+      <div class="card mt-5 m-2" style="width: 28rem;">
         <div class="card-body">
           <h6 class="card-title">Order Details</h6>
           <label for="OrderNo:">OrderNo:{{ .OrdID}}</label>
@@ -59,7 +59,7 @@
         </div>
       </div>
 
-    <table class="table mt-5">
+    <table class="table">
       <thead>
         <tr>
           <th scope="col">#</th>
@@ -88,12 +88,14 @@
           <td></td>
           <td></td>
           <td></td>
+          <td></td>
           <td> <input name="totalamt" type="text" class="border-0" value="{{ .amt }}"></td>
         </tr>
       </tbody>
     </table>
     <!-- <div id="logout" onclick="location.href='http://debian:8080/usrlogout';" class="admn_buttons btn btn-primary mt-2 float-right">Confirm Order</div> -->
-    <input class="btn bg-primary float-right m-4" type="submit" value="Back">
+    <input class="btn bg-primary float-right m-4" type="button" onclick="history.back()" value="Back">
+    <!-- <input type="button"  value="<<Back to Report" onclick="history.back()"> -->
     </form>
         <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

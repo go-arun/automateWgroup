@@ -309,7 +309,6 @@ func userIndexPost(c *gin.Context) {
 	if IsUsrSectionActive { // Moving to Orders page
 		fmt.Println("user asession is actice -- So Moving from landing page to Oreder ")
 		c.Redirect(http.StatusTemporaryRedirect, "/orders")
-
 		c.Abort()
 		// c.HTML(
 		// 	http.StatusOK,
@@ -496,43 +495,54 @@ func orderconfirmPost(c *gin.Context) { // Execuet this after selecting payment 
 }
 
 func orderHistoryPost(c *gin.Context) { //Will execute this After placing an order(& payment)
-	//Insert Current Order details to to DB
-	sessionCookie, _ := c.Cookie("user_session_cookie")
-	_, _, _, _, _, custID := db.TraceUserWithSIDinDB(sessionCookie)
-	toatlInString := c.PostForm("orderAmt")
-	fmt.Println("toatlInString Vql:->", toatlInString)
-	totalToFloat, err := strconv.ParseFloat(toatlInString, 64)
-	if err != nil {
-		fmt.Println("Convertion errror: ", err)
-	}
-	_, newOrderID := db.AddNewOrderEntry(custID, totalToFloat)
-	cartItems := session.PullCartItemFromCookie(c)
-	for key := range cartItems {
-		iCode, _ := strconv.Atoi(cartItems[key].ICode)
-		iQty, _ := strconv.Atoi(cartItems[key].IQty)
-		fmt.Println("icode and iqty", iCode, iQty)
-		okay := db.UpdateOrderDetails(newOrderID, iCode, iQty)
-		if !okay {
-			fmt.Println("Error in inserting to Order details ....")
+	IsUsrSectionActive := session.SessinStatus(c, "user_session_cookie")
+	if IsUsrSectionActive { // Dont want to entertain guest users herer !!!
+			//Insert Current Order details to to DB
+		sessionCookie, _ := c.Cookie("user_session_cookie")
+		_, _, _, _, _, custID := db.TraceUserWithSIDinDB(sessionCookie)
+		toatlInString := c.PostForm("orderAmt")
+		fmt.Println("toatlInString Vql:->", toatlInString)
+		totalToFloat, err := strconv.ParseFloat(toatlInString, 64)
+		if err != nil {
+			fmt.Println("Convertion errror: ", err)
 		}
-	}
-	//Now safe to remove cart entries in Cookies
-	session.RemoveCookie(c, "user_cart")
-	cartItems = nil
-	session.Cart = nil
+		_, newOrderID := db.AddNewOrderEntry(custID, totalToFloat)
+		cartItems := session.PullCartItemFromCookie(c)
+		for key := range cartItems {
+			iCode, _ := strconv.Atoi(cartItems[key].ICode)
+			iQty, _ := strconv.Atoi(cartItems[key].IQty)
+			fmt.Println("icode and iqty", iCode, iQty)
+			okay := db.UpdateOrderDetails(newOrderID, iCode, iQty)
+			if !okay {
+				fmt.Println("Error in inserting to Order details ....")
+			}
+		}
+		//Now safe to remove cart entries in Cookies
+		session.RemoveCookie(c, "user_cart")
+		cartItems = nil
+		session.Cart = nil
 
-	//Collecting all Order details to show
-	oK, UserOrderHosory := db.GetOrderHistory(custID)
-	if !oK {
-		fmt.Println("Something is went wrong while collecting order details !!")
+		//Collecting all Order details to show
+		oK, UserOrderHosory := db.GetOrderHistory(custID)
+		if !oK {
+			fmt.Println("Something is went wrong while collecting order details !!")
+		}
+		c.HTML(
+			http.StatusOK,
+			"orderhistory.html",
+			gin.H{"title": "User Login",
+				"OrderHistrory": UserOrderHosory,
+			},
+		)
+	}else{ // User is not logged in so do that first 
+		c.HTML(
+			http.StatusOK,
+			"user_login.html",
+			gin.H{"title": "User Login",
+				"diplay": "none", // TBD make use of this logic to diplay error
+			},
+		)
 	}
-	c.HTML(
-		http.StatusOK,
-		"orderhistory.html",
-		gin.H{"title": "User Login",
-			"OrderHistrory": UserOrderHosory,
-		},
-	)
 
 }
 
@@ -594,6 +604,7 @@ func main() {
 	router.GET("/usrlogout", userLogoutGet)
 	router.POST("/orderconfirm", orderconfirmPost) //Once order Confirmed from /orders , it comes here
 	router.POST("/orderhistory", orderHistoryPost)
+	router.GET("/orderhistory", orderHistoryPost)
 	router.GET("/showsingleorder", viewAnyOrderGet) // veiw any single Order
 
 	// //TestCode
