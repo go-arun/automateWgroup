@@ -55,13 +55,14 @@
           <th scope="col">Date&Time</th>
           <th scope="col">Amount</th>
           <th scope="col">Payment Mode</th>
-          <th scope="col">Order Staus</th>
+          <th scope="col">OrderStatus</th>
         </tr>
       </thead>
       <tbody>
         {{ range .OrderHistrory }}
         <tr>
-          <th scope="row">{{ .ID }}</th>
+          <!-- <th scope="row">{{ .ID }}</th> -->
+          <th scope="row"><a href="/show?id={{ .ID }}">{{.ID}}</a></th>
           <td>{{ .Date }}</td>
           <td>{{ .Amt }}</td>
           <td>{{ .PayMode }}</td>

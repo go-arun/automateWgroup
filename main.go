@@ -515,6 +515,8 @@ func orderHistoryPost(c *gin.Context) {
 	}
 	//Now safe to remove cart entries in Cookies
 	session.RemoveCookie(c,"user_cart")
+	cartItems = nil
+	session.Cart = nil
 
 	//Collecting all Order details to show
 	oK, UserOrderHosory := db.GetOrderHistory(custID)

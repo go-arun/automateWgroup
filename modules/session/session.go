@@ -18,8 +18,8 @@ type item struct {
 }
 //CartItems ... exported because it is using in main too
 type CartItems []item
-
-var cart CartItems // All items selectig by user will be appened to this array and  later push it as cookie
+//Cart .. clearing it from main too after order pricesing so set as Global
+var Cart CartItems // All items selectig by user will be appened to this array and  later push it as cookie
 
 //GenerateNewSessionID ... generating New UUID
 func GenerateNewSessionID() (string, error) {
@@ -214,8 +214,8 @@ func PushSelectionToCookie(c *gin.Context, itemCode, itemQty string) {
 	newItem.ICode = itemCode
 	newItem.IQty = itemQty
 	fmt.Println("newItem.iCode & newItem.iQty", newItem.ICode, newItem.IQty)
-	cart = append(cart, newItem)
-	cartJSON, err := json.Marshal(cart)
+	Cart = append(Cart, newItem)
+	cartJSON, err := json.Marshal(Cart)
 	if err != nil {
 		log.Fatal("Cannot encode to JSON ", err)
 	}

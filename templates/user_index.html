@@ -57,7 +57,7 @@
             <h4>{{ .Name}}</h4>
             <h4>Rs.{{ .Rate}}/{{.Unit}}</h4>
              <h4> inStock:{{.Stock}}</h4>
-            <select onchange="setVal()" name="{{ .ID }}" id="{{ .ID }}" style="width: 100px;">
+            <select  name="{{ .ID }}" id="f{{.ID}}" style="width: 100px;">
               <!-- <select cname="f_qty" id="f_qty" style="width: 192px;"> -->
               {{ if .IsUnitKg }}
                 <option value="Qty" >Select KG</option>
@@ -114,14 +114,21 @@
       </form>
     </div>
     <script>
-      function setVal(prod_id){
-        // window.localStorage.setItem('id', prod_id);
-      //  alert("Set Val")
-        
+      function verify_inputs(){ // I don't like this logic , find out something else TBD
+        var id;
+        var fpart = "f"
+          for (id = 1; id < 10; id++) {
+              idVal = fpart.concat(id)
+              if (document.getElementById(idVal) == null){ continue;}
+              if ((document.getElementById(idVal).value) != "Qty" ){
+                  alert (document.getElementById(idVal).value)
+                 return true
+              }
+           }
+           alert ("Please Select Item before Proceed !!")
+      return false
       }
-      function getVal(){
-       // alert("Get vAL")
-      }
+
     </script>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
