@@ -61,11 +61,11 @@
       <tbody>
         {{ range .OrderHistrory }}
         <tr>
-          <th scope="row">{{ .OrdrNo }}</th>
-          <td>{{ .DandTime }}</td>
-          <td>{{ .Amount }}</td>
-          <td>{{ .Pmode }}</td>
-          <td>{{ .OrderStatus }}</td>
+          <th scope="row">{{ .ID }}</th>
+          <td>{{ .Date }}</td>
+          <td>{{ .Amt }}</td>
+          <td>{{ .PayMode }}</td>
+          <td>{{ .Status }}</td>
         </tr>
         {{ end }}
       </tbody>

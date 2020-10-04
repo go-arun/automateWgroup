@@ -492,7 +492,7 @@ func orderconfirmPost(c *gin.Context){
 }
 
 func orderHistoryPost(c *gin.Context){
-	//Insert Current Order Items to DB
+	//Insert Current Order details to to DB
 	sessionCookie, _ := c.Cookie("user_session_cookie")
 	_,_,_,_,_,custID := db.TraceUserWithSIDinDB(sessionCookie)
 	 toatlInString := c.PostForm("orderAmt")
@@ -513,6 +513,18 @@ func orderHistoryPost(c *gin.Context){
 		}
 	 }
 
+	 //Collecting all Order details to show 
+	 oK,UserOrderHosory := db.GetOrderHistory(custID)
+		 if !oK{
+			 fmt.Println("Something is went wrong while collecting order details !!")
+		 }
+		c.HTML(
+			http.StatusOK,
+			"orderhistory.html",
+			gin.H{"title": "User Login",
+				  "OrderHistrory" : UserOrderHosory,
+			},
+		)
 }
 
 func main() {

@@ -22,6 +22,20 @@ type Admin struct {
 	name, mail, sesid, pwd string
 }
 
+type order struct {
+	ID      int
+	Date    string
+	Amt     float64
+	Status  string
+	PayMode string
+}
+
+//Orders ... to collect Order details to show in order History of user.
+type Orders []order
+
+//OrderHistory ...
+var OrderHistory Orders
+
 //Connect for connecting with MariaDB
 func Connect() {
 	dbDriver := "mysql"
@@ -124,13 +138,13 @@ func TraceTempSIDinDB(sessCookie string) (sessStatus bool) {
 }
 
 //TraceUserWithSIDinDB ...
-func TraceUserWithSIDinDB(sessCookie string) (sessStatus bool, custMob int, custName, custAdr1, custAdr2 string,custID int) {
+func TraceUserWithSIDinDB(sessCookie string) (sessStatus bool, custMob int, custName, custAdr1, custAdr2 string, custID int) {
 	selDB, err := Connection.Query("SELECT cust_name,cust_mob,cust_adr1,cust_adr2,cust_id FROM cust_master WHERE cust_sesid = '" + sessCookie + "' ")
 	if err != nil {
 		panic(err.Error())
 	}
 	for selDB.Next() {
-		err = selDB.Scan(&custName, &custMob, &custAdr1, &custAdr2,&custID)
+		err = selDB.Scan(&custName, &custMob, &custAdr1, &custAdr2, &custID)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -175,18 +189,19 @@ func GetItemDescAndRate(itemID string) (itemDesc string, itemRate float64, unit 
 	}
 	return
 }
-//AddNewOrderEntry ... 
-func AddNewOrderEntry(custID int, orderAmt float64) (operationStatus bool,generatedOrderID int) {
+
+//AddNewOrderEntry ...
+func AddNewOrderEntry(custID int, orderAmt float64) (operationStatus bool, generatedOrderID int) {
 	insForm, err := Connection.Prepare(
 		"INSERT INTO order_master(cust_id,order_amt) VALUES (?,?)",
 	)
 	_, err = insForm.Exec(custID, orderAmt)
 	if err != nil {
 		fmt.Println(err)
-		return 
+		return
 	}
 
-		//Geting last crated ID
+	//Geting last crated ID
 	selDB, err := Connection.Query("SELECT max(order_id) FROM order_master")
 	if err != nil {
 		fmt.Println(err)
@@ -201,17 +216,42 @@ func AddNewOrderEntry(custID int, orderAmt float64) (operationStatus bool,genera
 	}
 	return
 }
+
 //UpdateOrderDetails ...
-func UpdateOrderDetails(orderID,itemID,itemQty int) (operationStatus bool) {
+func UpdateOrderDetails(orderID, itemID, itemQty int) (operationStatus bool) {
 	insForm, err := Connection.Prepare(
 		"INSERT INTO order_detail(order_id,item_id,item_qty) VALUES (?,?,?)",
 	)
-	_, err = insForm.Exec(orderID, itemID,itemQty)
+	_, err = insForm.Exec(orderID, itemID, itemQty)
 	if err != nil {
 		fmt.Println(err)
-		return 
+		return
 	}
 	operationStatus = true
+	return
+
+}
+
+//GetOrderHistory ...
+func GetOrderHistory(custID int) (operationStatus bool, UsrOrderHistory Orders) {
+	var singleOrder order
+	fmt.Println("Tarcing Oder hostory of Custer haing ID:", custID)
+	// selDB, err := Connection.Query("SELECT order_id,order_date,order_amt,order_status,p_mode from order_master WHERE cust_id=2")
+
+	selDB, err := Connection.Query("SELECT order_id,order_date,order_amt,order_status,p_mode from order_master WHERE cust_id= " + strconv.Itoa(custID))
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	for selDB.Next() {
+		err = selDB.Scan(&singleOrder.ID, &singleOrder.Date, &singleOrder.Amt, &singleOrder.Status, &singleOrder.PayMode)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		UsrOrderHistory = append(UsrOrderHistory, singleOrder)
+	}
+	operationStatus = true // all went well ..
 	return
 
 }
