@@ -62,7 +62,7 @@
         {{ range .OrderHistrory }}
         <tr>
           <!-- <th scope="row">{{ .ID }}</th> -->
-          <th scope="row"><a href="/show?id={{ .ID }}">{{.ID}}</a></th>
+          <th scope="row"><a href="/showsingleorder?ordid={{ .ID }}">{{.ID}}</a></th>
           <td>{{ .Date }}</td>
           <td>{{ .Amt }}</td>
           <td>{{ .PayMode }}</td>

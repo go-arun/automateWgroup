@@ -264,9 +264,9 @@ func GetOrderHistory(custID int) (operationStatus bool, UsrOrderHistory Orders) 
 	return
 
 }
-
-func getSingleOredrDetails(OrderID int) (operationStatus bool, itmsInOrder itemsInSingleOrder, date, ordStatus, PayMode string, amt float64) {
-	selDB, err := Connection.Query("SELECT order_date,order_status,order_amt,p_mode from order_master WHERE order_id= " + strconv.Itoa(OrderID))
+//GetSingleOredrDetails ...
+func GetSingleOredrDetails(OrderID string) (operationStatus bool,ItemsInOrder itemsInSingleOrder, date, ordStatus, PayMode string, amt float64) {
+	selDB, err := Connection.Query("SELECT order_date,order_status,order_amt,p_mode from order_master WHERE order_id= " + OrderID)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -280,17 +280,26 @@ func getSingleOredrDetails(OrderID int) (operationStatus bool, itmsInOrder items
 	}
 
 	//Now Collect Multtiple Items ( maye contain single item only in one order :) , in this order
-	selDB, err = Connection.Query("select order_detail.item_id,item_master.item_desc,item_master.item_sel_price,item_master.item_unit,order_detail.item_qty FROM order_master INNER JOIN order_detail ON order_master.order_id = order_detail.order_id INNER JOIN item_master ON order_detail.item_id = item_master.item_id WHERE order_master.order_id=" + strconv.Itoa(OrderID))
+	var item ord // we are picking one by one. adding to the struct array 
+	selDB, err = Connection.Query("select order_detail.item_id,item_master.item_desc,item_master.item_sel_price,item_master.item_unit,order_detail.item_qty FROM order_master INNER JOIN order_detail ON order_master.order_id = order_detail.order_id INNER JOIN item_master ON order_detail.item_id = item_master.item_id WHERE order_master.order_id=" + OrderID)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	for selDB.Next() {
-		err = selDB.Scan(&date, &ordStatus, &amt, &PayMode)
+		err = selDB.Scan(&item.ID,
+			&item.Desc,
+			&item.Price,
+			&item.Unit,
+			&item.Qty,
+		)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
+		ItemsInOrder = append ( ItemsInOrder,item) // making a collection of all items in our oder 
 	}
+	// okay done the job
+	operationStatus = true 
 	return
 }

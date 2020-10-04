@@ -220,7 +220,7 @@ func logoutGet(c *gin.Context) {
 }
 
 func userIndexGet(c *gin.Context) {
-	//For safer side alway clear cart 
+	//For safer side alway clear cart
 	session.Cart = nil
 
 	selDB, err := db.Connection.Query("SELECT item_id,item_desc,item_unit,item_stock,item_sel_price FROM item_master WHERE item_stock > 0")
@@ -420,7 +420,7 @@ func userOrdersGet(c *gin.Context) {
 		},
 	)
 }
-func userOrdersPost(c *gin.Context) {  // Redirected from IndexpagePost event 
+func userOrdersPost(c *gin.Context) { // Redirected from IndexpagePost event
 	cartItems := session.PullCartItemFromCookie(c) // Return a struct array of cart items retrived from Cookies
 	var singleCartItem CartItem
 	var fullCartItems []CartItem
@@ -495,7 +495,7 @@ func orderconfirmPost(c *gin.Context) { // Execuet this after selecting payment 
 	}
 }
 
-func orderHistoryPost(c *gin.Context) { //Will execute this After placing an order(& payment) 
+func orderHistoryPost(c *gin.Context) { //Will execute this After placing an order(& payment)
 	//Insert Current Order details to to DB
 	sessionCookie, _ := c.Cookie("user_session_cookie")
 	_, _, _, _, _, custID := db.TraceUserWithSIDinDB(sessionCookie)
@@ -517,7 +517,7 @@ func orderHistoryPost(c *gin.Context) { //Will execute this After placing an ord
 		}
 	}
 	//Now safe to remove cart entries in Cookies
-	session.RemoveCookie(c,"user_cart")
+	session.RemoveCookie(c, "user_cart")
 	cartItems = nil
 	session.Cart = nil
 
@@ -534,40 +534,37 @@ func orderHistoryPost(c *gin.Context) { //Will execute this After placing an ord
 		},
 	)
 
-
 }
-// To disply any particulr Order 
-func viewAnyOrderGet(c *gin.Context) { 
 
-	cartItems := session.PullCartItemFromCookie(c) // Return a struct array of cart items retrived from Cookies
-	var singleCartItem CartItem
-	var fullCartItems []CartItem
-	var TotalAmt float64
-	for key := range cartItems { // range through the array contains the cookie(havning only icode and qty) and adding missing details from DB
-		singleCartItem.SlNo = key + 1
-		singleCartItem.Qty, _ = strconv.Atoi(cartItems[key].IQty)
-		desc, rate, unit := db.GetItemDescAndRate(cartItems[key].ICode)
-		singleCartItem.Desc = desc
-		singleCartItem.Rate = fmt.Sprintf("%.2f", rate)
-		singleCartItem.Unit = unit
-		singleCartItem.SubTotal = fmt.Sprintf("%.2f", float64(singleCartItem.Qty)*rate)
-
-		fullCartItems = append(fullCartItems, singleCartItem)
-		fmt.Println(cartItems[key].ICode)
-		//fmt.Println("key and val=", key, val)
-		subTotalToFloat, _ := strconv.ParseFloat(singleCartItem.SubTotal, 64)
-		TotalAmt = TotalAmt + subTotalToFloat
+// To disply any particulr Order
+func viewAnyOrderGet(c *gin.Context) {
+	OrdID := c.Request.URL.Query()["ordid"][0] // Getting Order ID passed with URL
+	//number : map[ordid:[17]]
+	fmt.Println("Wnat to see the order details of order number ", OrdID)
+	oK, itemsList, date, status, PayMode, amt := db.GetSingleOredrDetails(OrdID)
+	if !oK {
+		fmt.Println("Something went wrong while picking Single Order Deatils ..Please have a look")
 	}
-	TotalAmtInPaisa := TotalAmt * 100 // This is required while initate for payment in Razorpay
+	fmt.Println(oK, itemsList, date, status, PayMode, amt)
+	//		subTotalToFloat, _ := strconv.ParseFloat(singleCartItem.SubTotal, 64)
+	//		TotalAmt = TotalAmt + subTotalToFloat
+	//	TotalAmtInPaisa := TotalAmt * 100 // This is required while initate for payment in Razorpay
 
-	TotalAmtString := fmt.Sprintf("%.2f", TotalAmt)
+	//	TotalAmtString := fmt.Sprintf("%.2f", TotalAmt)
+
 	c.HTML(
 		http.StatusOK,
-		"orders.html",
-		gin.H{"title": "User Login",
-			"ItemsOrdered":    fullCartItems,
-			"TotalAmt":        TotalAmtString,
-			"TotalAmtInPaisa": TotalAmtInPaisa,
+		"view_particular_order.html",
+		gin.H{"title": "OrderDetail",
+			"ItemsOrdered": itemsList,
+			"OrdID":        OrdID,
+			"date":         date,
+			"PayMode":      PayMode,
+			"amt":          amt,
+			"OrdStatus" : status,
+
+			// "TotalAmt":        TotalAmtString,
+			// "TotalAmtInPaisa": TotalAmtInPaisa,
 		},
 	)
 
@@ -597,6 +594,7 @@ func main() {
 	router.GET("/usrlogout", userLogoutGet)
 	router.POST("/orderconfirm", orderconfirmPost) //Once order Confirmed from /orders , it comes here
 	router.POST("/orderhistory", orderHistoryPost)
+	router.GET("/showsingleorder", viewAnyOrderGet) // veiw any single Order
 
 	// //TestCode
 	// router.GET("/otp", otpGet)

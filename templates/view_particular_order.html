@@ -47,7 +47,18 @@
       </div>
   </nav>
     <!--NavBarEnd  -->
+    
     <form  class="form-block pb-3" action="/orderconfirm" method="POST">
+      <div class="card float-right mt-5 m-2" style="width: 18rem;">
+        <div class="card-body">
+          <h6 class="card-title">Order Details</h6>
+          <label for="OrderNo:">OrderNo:{{ .OrdID}}</label>
+          <label for="OrderDt">Date     :{{ .date }}</label>
+          <label for="PayMode">Payment Mode: {{.PayMode}}</label>
+          <label for="OrdStatus">Order Status: {{.OrdStatus}}</label>
+        </div>
+      </div>
+
     <table class="table mt-5">
       <thead>
         <tr>
@@ -62,12 +73,14 @@
       <tbody>
         {{ range .ItemsOrdered }}
         <tr>
-          <th scope="row">{{ .SlNo }}</th>
+          <th scope="row"></th> <!--Need to add sl No here-->
+          <!-- <th scope="row"></th> -->
           <td>{{ .Desc }}</td>
           <td>{{ .Qty }}</td>
           <td>{{ .Unit }}</td>
-          <td>{{ .Rate }}</td>
-          <td>{{ .SubTotal }}</td>
+          <td>{{ .Price }}</td>
+          <td></td> <!--SubTotal Should Come here-->
+          <!-- <td> .SubTotal </td> -->
         </tr>
         {{ end }}
         <tr>
@@ -75,30 +88,12 @@
           <td></td>
           <td></td>
           <td></td>
-          <td><input name="amt_inPaisa" type="text" class="border-0" value="{{ .TotalAmtInPaisa }}" style="display: none;"></td>
-          <td> <input name="totalamt" type="text" class="border-0" value="{{ .TotalAmt }}"></td>
+          <td> <input name="totalamt" type="text" class="border-0" value="{{ .amt }}"></td>
         </tr>
       </tbody>
     </table>
-    <div class="card float-right m-2" style="width: 18rem;">
-      <div class="card-body">
-        <h6 class="card-title"> Select Payment Mode</h6>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="paymentMode" id="cod" value="cod" checked>
-          <label class="form-check-label" for="exampleRadios1">
-            Cash On Delivery
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="paymentMode" id="online" value="online" >
-          <label class="form-check-label" for="exampleRadios1">
-            Online 
-          </label>
-        </div>
-      </div>
-    </div><br>
     <!-- <div id="logout" onclick="location.href='http://debian:8080/usrlogout';" class="admn_buttons btn btn-primary mt-2 float-right">Confirm Order</div> -->
-    <input class="btn bg-primary float-right m-4" type="submit" value="Confirm Order">
+    <input class="btn bg-primary float-right m-4" type="submit" value="Back">
     </form>
         <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
