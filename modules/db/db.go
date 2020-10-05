@@ -333,13 +333,13 @@ func DelitemFromMaster(itemID string) (oprationStatus bool) {
 	return
 }
 //UpdateItemInMaster ...
-func UpdateItemInMaster(itemID string) (oprationStatus bool) {
-	delForm, err := Connection.Prepare("DELETE FROM item_master WHERE item_id= ?")
+func UpdateItemInMaster(itemID,itemDesc string,Pprice,Sprice string,stock string) (oprationStatus bool) {
+	updateForm, err := Connection.Prepare("UPDATE item_master SET item_desc=?,item_buy_price=?,item_sel_price=?,item_stock=? WHERE item_id=?")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	_, err = delForm.Exec(itemID)
+	_, err = updateForm.Exec(itemDesc,Pprice,Sprice,stock,itemID)
 	if err != nil {
 		fmt.Println(err)
 		return

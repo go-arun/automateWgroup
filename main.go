@@ -81,8 +81,8 @@ func updateStock(c *gin.Context) {
 	)
 }
 func populateCategoryItems(c *gin.Context, itemID string) { // later move to db Module TBD
-	 var strSQL string										// that time remove 2ndArgument, may be useless that time TBD
-	if itemID == "" { //Caller need whole details			
+	var strSQL string // that time remove 2ndArgument, may be useless that time TBD
+	if itemID == "" { //Caller need whole details
 		strSQL = "SELECT item_id,item_desc,item_unit,item_stock,item_sel_price,item_buy_price FROM item_master ORDER BY  item_stock DESC"
 	} else { // choose only one item based on given itemID
 		strSQL = "SELECT item_id,item_desc,item_unit,item_stock,item_sel_price,item_buy_price FROM item_master WHERE item_id=" + itemID
@@ -114,18 +114,18 @@ func populateCategoryItems(c *gin.Context, itemID string) { // later move to db 
 
 		itemCollection = append(itemCollection, item)
 	}
-	if itemID =="" { // Means taken all details to show in stock list option
+	if itemID == "" { // Means taken all details to show in stock list option
 		c.HTML(
 			http.StatusOK,
 			"admin_panel.html", gin.H{
 				"FishCatagories": itemCollection,
 			})
-	}else{ // Just picked asked item details only for view/edit
+	} else { // Just picked asked item details only for view/edit
 		c.HTML(
 			http.StatusOK,
 			"edit_item.html", gin.H{
 				"FishCatagories": itemCollection,
-				"diplay"		: "none",
+				"diplay":         "none",
 			})
 	}
 
@@ -460,7 +460,7 @@ func userOrdersPost(c *gin.Context) { // Redirected from IndexpagePost event
 	for key := range cartItems { // range through the array contains the cookie(havning only icode and qty) and adding missing details from DB
 		singleCartItem.SlNo = key + 1
 		singleCartItem.Qty, _ = strconv.Atoi(cartItems[key].IQty)
-		desc, rate, unit,_,_,_ := db.GetItemDetails(cartItems[key].ICode)
+		desc, rate, unit, _, _, _ := db.GetItemDetails(cartItems[key].ICode)
 		singleCartItem.Desc = desc
 		singleCartItem.Rate = fmt.Sprintf("%.2f", rate)
 		singleCartItem.Unit = unit
@@ -624,10 +624,11 @@ func orderHistoryPost(c *gin.Context) { //Will execute this After placing an ord
 	}
 
 }
+
 // To disply any particulr Order
 func viewAnyOrderGet(c *gin.Context) {
 	OrdID := c.Request.URL.Query()["ordid"][0] // Getting Order ID passed with URL
-	_,usrName := session.SessinStatus(c, "user_session_cookie")
+	_, usrName := session.SessinStatus(c, "user_session_cookie")
 	fmt.Println("Wnat to see the order details of order number ", OrdID)
 	oK, itemsList, date, status, PayMode, amt := db.GetSingleOredrDetails(OrdID)
 	if !oK {
@@ -650,7 +651,7 @@ func viewAnyOrderGet(c *gin.Context) {
 			"PayMode":      PayMode,
 			"amt":          amt,
 			"OrdStatus":    status,
-			"usrName" 	: usrName,
+			"usrName":      usrName,
 
 			// "TotalAmt":        TotalAmtString,
 			// "TotalAmtInPaisa": TotalAmtInPaisa,
@@ -674,56 +675,79 @@ func viewandedititemGet(c *gin.Context) {
 		)
 	} else {
 		itemID := c.Request.URL.Query()["itemid"][0] // Getting Order ID passed with URL
-		fmt.Println("Initiating to View/Edit item ,having ID",itemID)
+		fmt.Println("Initiating to View/Edit item ,having ID", itemID)
 		//populateCategoryItems(c, itemID)
 		//GetItemDetails(itemID string) (itemDesc string, itemRate float64, unit string,itmID,itmStock int,itmBuyRate float64) {
 		//Don't Confuse above function will redirect
 		//to edit page, usual practice is giving here
-		//but we achived this by modifying the existing 
+		//but we achived this by modifying the existing
 		//code so it happend so..
-		itmDesc,itmSelRate,itmUnit,itmID,itmStock,itmBuyPrice :=  db.GetItemDetails(itemID)
+		itmDesc, itmSelRate, itmUnit, itmID, itmStock, itmBuyPrice := db.GetItemDetails(itemID)
 		c.HTML(
 			http.StatusOK,
 			"edit_item.html", gin.H{
-				"diplay"		: "none",
-				"title"			: "Edit Item",
-				"itmID"			: itmID,
-				"itmDesc"		: itmDesc,
-				"itmUnit"		: itmUnit,
-				"itmBuyPrice"	: itmBuyPrice,
-				"itmSelRate"	: itmSelRate,
-				"itmStock"		: itmStock,
+				"delWarning":   "none",
+				"updateSucess": "none",
+				"title":       "Edit Item",
+				"itmID":       itmID,
+				"itmDesc":     itmDesc,
+				"itmUnit":     itmUnit,
+				"itmBuyPrice": itmBuyPrice,
+				"itmSelRate":  itmSelRate,
+				"itmStock":    itmStock,
 			})
 	}
 }
-func viewandedititemPost(c *gin.Context){
-	 userOption := c.PostForm("action")
-	 itemID		:= c.PostForm("icode")
-	 switch userOption{
-	 case "delete":
+func viewandedititemPost(c *gin.Context) {
+	userOption := c.PostForm("action")
+	itemID := c.PostForm("icode")
+	switch userOption {
+	case "delete":
 		oK := db.DelitemFromMaster(itemID)
-		if !oK{ // Most of the case due to existing reference to other tables , this operation will fail
-		itmDesc,itmSelRate,itmUnit,itmID,itmStock,itmBuyPrice :=  db.GetItemDetails(itemID)
+		if !oK { // Most of the case due to existing reference to other tables , this operation will fail
+			itmDesc, itmSelRate, itmUnit, itmID, itmStock, itmBuyPrice := db.GetItemDetails(itemID)
 			fmt.Println("DEL Operation Failed ")
 			c.HTML(
 				http.StatusOK,
 				"edit_item.html", gin.H{
-					"diplay"		: "block",
-					"title"			: "Edit Item",
-					"itmID"			: itmID,
-					"itmDesc"		: itmDesc,
-					"itmUnit"		: itmUnit,
-					"itmBuyPrice"	: itmBuyPrice,
-					"itmSelRate"	: itmSelRate,
-					"itmStock"		: itmStock,
+					"delWarning":   "block",
+					"updateSucess": "none",
+					"title":        "Edit Item",
+					"itmID":        itmID,
+					"itmDesc":      itmDesc,
+					"itmUnit":      itmUnit,
+					"itmBuyPrice":  itmBuyPrice,
+					"itmSelRate":   itmSelRate,
+					"itmStock":     itmStock,
 				})
 
 		}
-
 	case "update":
-		
+		pPrice := c.PostForm("pPrice")
+		sPrice := c.PostForm("sPrice")
+		stock := c.PostForm("stock")
+		itmName := c.PostForm("itmName")
+		oK := db.UpdateItemInMaster(itemID, itmName, pPrice, sPrice, stock)
+		if !oK {
+			fmt.Println("Update Failed ")
+		}
+		//Diplaying after updation
+		itmDesc, itmSelRate, itmUnit, itmID, itmStock, itmBuyPrice := db.GetItemDetails(itemID)
+		c.HTML(
+			http.StatusOK,
+			"edit_item.html", gin.H{
+				"delWarning":   "none",
+				"updateSucess": "block",
+				"title":        "Edit Item",
+				"itmID":        itmID,
+				"itmDesc":      itmDesc,
+				"itmUnit":      itmUnit,
+				"itmBuyPrice":  itmBuyPrice,
+				"itmSelRate":   itmSelRate,
+				"itmStock":     itmStock,
+			})
 
-	 }
+	}
 }
 func main() {
 	db.Connect() //db Connection

@@ -11,12 +11,18 @@
     <title>{{.title}}</title>
   </head>
   <body style="background-color: rgb(192, 215, 228);">
-    <div class="alert alert-warning alert-dismissible fade show" role="alert" style="display: {{.diplay}};">
+    <div class="alert alert-warning alert-dismissible fade show" role="alert" style="display: {{.delWarning}};">
       <strong>Can't Delete!!</strong>This item is already in User's Order Record.
       <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
-  </div>
+   </div>
+   <div class="alert alert-warning alert-dismissible fade show" role="alert" style="display: {{.updateSucess}};">
+    <strong>Success!!</strong>Item Details Updated!.
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+ </div>
     <div class="container my-5">
         <div class="lg-12" style="text-align: center; border: 0px;"><p>Edit Item</p></div>
         <form id="editForm" action="/viewandedititem" method="post" enctype="multipart/form-data" onsubmit="return verify_inputs()">
@@ -38,11 +44,11 @@
                     <tbody>
                       <tr>
                         <th scope="row"> <input name="icode" class="w-25" type="text" value="{{.itmID}}" readonly></th>
-                        <td><input required="true" type="text"  value="{{ .itmDesc }}"></td>
+                        <td><input name="itmName" required="true" type="text"  value="{{ .itmDesc }}"></td>
                         <td><input type="text" class="w-25" value="{{ .itmUnit }}" readonly></td>
-                        <td><input type="text" class="w-25" value="{{ .itmBuyPrice }}" readonly></td>
-                        <td><input type="text" class="w-25" value="{{ .itmSelRate }}" readonly></td>
-                        <td><input type="text" class="w-25" value="{{ .itmStock }}" readonly></td>
+                        <td><input name="pPrice" type="text" class="w-25" value="{{ .itmBuyPrice }}" ></td>
+                        <td><input name="sPrice"  type="text" class="w-25" value="{{ .itmSelRate }}" ></td>
+                        <td><input name="stock" type="text" class="w-25" value="{{ .itmStock }}" ></td>
                       </tr>
                     </tbody>
                   </table>
@@ -53,9 +59,7 @@
               <div class="lg-4">
               <div id="update" onclick="setOperation(this.id)" class="admn_buttons btn btn-primary m-1">Update</div>
               <div id="delete" onclick="setOperation(this.id)" class="admn_buttons btn btn-primary m-1">Delete</div>
-              <div id="goback" class="admn_buttons btn btn-primary m-1">Back to Panel</div>
-              <!-- <div id="logout" onclick="location.href='http://debian:8080/logout';" class="admn_buttons btn btn-primary m-1">Logout</div> -->
-              <!-- <div id="logout" onclick="location.href='http://debian:8080/logout';" class="admn_buttons btn btn-primary m-1">Logout</div><br> -->
+              <div id="goback" onclick="location.href='http://debian:8080/admin';" class="admn_buttons btn btn-primary m-1">Back to Panel</div>
           </div>
       </div>
     </div>
