@@ -491,16 +491,55 @@ func orderconfirmPost(c *gin.Context) { // Execuet this after selecting payment 
 			},
 		)
 
+	} else { // Cod Payemnt so will directy go to Orders Page and procedd next steps
+		c.Redirect(http.StatusTemporaryRedirect, "/orderhistory") // redirecting
+		c.Abort()
 	}
+}
+
+//To show order details-while accessing from NAV bar
+// if the user is logged in - otherwise skip to login page
+func orderHistoryGet(c *gin.Context) {
+	IsUsrSectionActive := session.SessinStatus(c, "user_session_cookie")
+	if !IsUsrSectionActive {
+		c.HTML(
+			http.StatusOK,
+			"user_login.html",
+			gin.H{"title": "User Login",
+				"diplay": "none", // TBD make use of this logic to diplay error
+			},
+		)
+
+	} else {
+		sessionCookie, _ := c.Cookie("user_session_cookie")
+		_, _, _, _, _, custID := db.TraceUserWithSIDinDB(sessionCookie)
+		//Collecting all Order details to show
+		oK, UserOrderHisory := db.GetOrderHistory(custID)
+		if !oK {
+			fmt.Println("Something is went wrong while collecting order details !!")
+		}
+		c.HTML(
+			http.StatusOK,
+			"orderhistory.html",
+			gin.H{"title": "Orders",
+				"OrderHistrory": UserOrderHisory,
+			},
+		)
+
+	}
+
 }
 
 func orderHistoryPost(c *gin.Context) { //Will execute this After placing an order(& payment)
 	IsUsrSectionActive := session.SessinStatus(c, "user_session_cookie")
 	if IsUsrSectionActive { // Dont want to entertain guest users herer !!!
-			//Insert Current Order details to to DB
+		//Insert Current Order details to to DB
 		sessionCookie, _ := c.Cookie("user_session_cookie")
 		_, _, _, _, _, custID := db.TraceUserWithSIDinDB(sessionCookie)
 		toatlInString := c.PostForm("orderAmt")
+		// if toatlInString == "0" { //Yes it happens while COD payment
+		// 	toatlInString := c.PostForm("totalamt")			
+		// }
 		fmt.Println("toatlInString Vql:->", toatlInString)
 		totalToFloat, err := strconv.ParseFloat(toatlInString, 64)
 		if err != nil {
@@ -534,7 +573,7 @@ func orderHistoryPost(c *gin.Context) { //Will execute this After placing an ord
 				"OrderHistrory": UserOrderHosory,
 			},
 		)
-	}else{ // User is not logged in so do that first 
+	} else { // User is not logged in so do that first
 		c.HTML(
 			http.StatusOK,
 			"user_login.html",
@@ -571,7 +610,7 @@ func viewAnyOrderGet(c *gin.Context) {
 			"date":         date,
 			"PayMode":      PayMode,
 			"amt":          amt,
-			"OrdStatus" : status,
+			"OrdStatus":    status,
 
 			// "TotalAmt":        TotalAmtString,
 			// "TotalAmtInPaisa": TotalAmtInPaisa,
@@ -604,7 +643,7 @@ func main() {
 	router.GET("/usrlogout", userLogoutGet)
 	router.POST("/orderconfirm", orderconfirmPost) //Once order Confirmed from /orders , it comes here
 	router.POST("/orderhistory", orderHistoryPost)
-	router.GET("/orderhistory", orderHistoryPost)
+	router.GET("/orderhistory", orderHistoryGet)    // to give functionality to Nav bar - Order Link
 	router.GET("/showsingleorder", viewAnyOrderGet) // veiw any single Order
 
 	// //TestCode
