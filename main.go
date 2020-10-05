@@ -458,7 +458,7 @@ func orderconfirmPost(c *gin.Context) { // Execuet this after selecting payment 
 	sessionCookie, _ := c.Cookie("user_session_cookie")
 	_, cMo, cNme, cAdr1, cAdr2, _ := db.TraceUserWithSIDinDB(sessionCookie)
 	amtInPaisa, _ := strconv.Atoi(c.PostForm("amt_inPaisa")) //Eg 24545
-	totalamt := c.PostForm("totalamt")                       // in noraml foramt Eg 245.45
+	totalamt := c.PostForm("orderAmt")                       // in noraml foramt Eg 245.45
 	if c.PostForm("paymentMode") == "online" {
 		client := razorpay.NewClient("rzp_test_zlsYsrvuUxxhln", "9LtUy4qpLCOtl4Gz2asp59es")
 		data := map[string]interface{}{
@@ -536,10 +536,7 @@ func orderHistoryPost(c *gin.Context) { //Will execute this After placing an ord
 		//Insert Current Order details to to DB
 		sessionCookie, _ := c.Cookie("user_session_cookie")
 		_, _, _, _, _, custID := db.TraceUserWithSIDinDB(sessionCookie)
-		toatlInString := c.PostForm("orderAmt")
-		// if toatlInString == "0" { //Yes it happens while COD payment
-		// 	toatlInString := c.PostForm("totalamt")			
-		// }
+		toatlInString := c.PostForm("orderAmt") //Fun part is, in COD and ONLINE getting this value from 2 different forms , both input having the same name
 		fmt.Println("toatlInString Vql:->", toatlInString)
 		totalToFloat, err := strconv.ParseFloat(toatlInString, 64)
 		if err != nil {
