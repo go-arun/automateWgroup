@@ -162,6 +162,7 @@ func addNewCatagory(c *gin.Context) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	populateCategoryItems(c, "") // Everything fine in adding new catagory , but I am not happy , req err handling TBD
 }
 
 func adminGet(c *gin.Context) {
@@ -688,13 +689,13 @@ func viewandedititemGet(c *gin.Context) {
 			"edit_item.html", gin.H{
 				"delWarning":   "none",
 				"updateSucess": "none",
-				"title":       "Edit Item",
-				"itmID":       itmID,
-				"itmDesc":     itmDesc,
-				"itmUnit":     itmUnit,
-				"itmBuyPrice": itmBuyPrice,
-				"itmSelRate":  itmSelRate,
-				"itmStock":    itmStock,
+				"title":        "Edit Item",
+				"itmID":        itmID,
+				"itmDesc":      itmDesc,
+				"itmUnit":      itmUnit,
+				"itmBuyPrice":  itmBuyPrice,
+				"itmSelRate":   itmSelRate,
+				"itmStock":     itmStock,
 			})
 	}
 }
@@ -720,7 +721,8 @@ func viewandedititemPost(c *gin.Context) {
 					"itmSelRate":   itmSelRate,
 					"itmStock":     itmStock,
 				})
-
+		} else { //Delete  success so going back to admin panel
+			populateCategoryItems(c, "")
 		}
 	case "update":
 		pPrice := c.PostForm("pPrice")
