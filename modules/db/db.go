@@ -36,6 +36,7 @@ type ord struct { // using only while fetching single order details for user
 	Price float64
 	Unit  string
 	Qty   int
+	SubTotal float64 // This is must while listing single order details
 }
 type itemsInSingleOrder []ord
 
@@ -236,9 +237,19 @@ func UpdateOrderDetails(orderID, itemID, itemQty int) (operationStatus bool) {
 		fmt.Println(err)
 		return
 	}
+
+	//Hey we need to reduce the stock too
+	insForm, err = Connection.Prepare(
+		"UPDATE item_master SET item_stock = item_stock - ? WHERE item_id = ?",
+	)
+	_, err = insForm.Exec(itemQty, itemID)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	// Everything looks fine!!
 	operationStatus = true
 	return
-
 }
 
 //GetOrderHistory ...
@@ -298,6 +309,7 @@ func GetSingleOredrDetails(OrderID string) (operationStatus bool, ItemsInOrder i
 			fmt.Println(err)
 			return
 		}
+		item.SubTotal = (item.Price * float64(item.Qty))
 		ItemsInOrder = append(ItemsInOrder, item) // making a collection of all items in our oder
 	}
 	// okay done the job

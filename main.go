@@ -544,7 +544,10 @@ func orderHistoryPost(c *gin.Context) { //Will execute this After placing an ord
 		if err != nil {
 			fmt.Println("Convertion errror: ", err)
 		}
+		// This is only updating master order table
 		_, newOrderID := db.AddNewOrderEntry(custID, totalToFloat,payMode)
+
+		//Now add induvidual item details to order_details table 
 		cartItems := session.PullCartItemFromCookie(c)
 		for key := range cartItems {
 			iCode, _ := strconv.Atoi(cartItems[key].ICode)
