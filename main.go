@@ -533,6 +533,8 @@ func orderHistoryGet(c *gin.Context) {
 func orderHistoryPost(c *gin.Context) { //Will execute this After placing an order(& payment)
 	IsUsrSectionActive := session.SessinStatus(c, "user_session_cookie")
 	if IsUsrSectionActive { // Dont want to entertain guest users herer !!!
+		payMode := c.PostForm("paymentMode")
+		if payMode != "cod"{ payMode = "online"} // will not get the value if it comes from Online payment page, so setting it here
 		//Insert Current Order details to to DB
 		sessionCookie, _ := c.Cookie("user_session_cookie")
 		_, _, _, _, _, custID := db.TraceUserWithSIDinDB(sessionCookie)
@@ -542,7 +544,7 @@ func orderHistoryPost(c *gin.Context) { //Will execute this After placing an ord
 		if err != nil {
 			fmt.Println("Convertion errror: ", err)
 		}
-		_, newOrderID := db.AddNewOrderEntry(custID, totalToFloat)
+		_, newOrderID := db.AddNewOrderEntry(custID, totalToFloat,payMode)
 		cartItems := session.PullCartItemFromCookie(c)
 		for key := range cartItems {
 			iCode, _ := strconv.Atoi(cartItems[key].ICode)

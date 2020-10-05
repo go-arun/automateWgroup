@@ -200,11 +200,11 @@ func GetItemDescAndRate(itemID string) (itemDesc string, itemRate float64, unit 
 }
 
 //AddNewOrderEntry ...
-func AddNewOrderEntry(custID int, orderAmt float64) (operationStatus bool, generatedOrderID int) {
+func AddNewOrderEntry(custID int, orderAmt float64, modeOfPay string) (operationStatus bool, generatedOrderID int) {
 	insForm, err := Connection.Prepare(
-		"INSERT INTO order_master(cust_id,order_amt) VALUES (?,?)",
+		"INSERT INTO order_master(cust_id,order_amt,p_mode) VALUES (?,?,?)",
 	)
-	_, err = insForm.Exec(custID, orderAmt)
+	_, err = insForm.Exec(custID, orderAmt, modeOfPay)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -264,8 +264,9 @@ func GetOrderHistory(custID int) (operationStatus bool, UsrOrderHistory Orders) 
 	return
 
 }
+
 //GetSingleOredrDetails ...
-func GetSingleOredrDetails(OrderID string) (operationStatus bool,ItemsInOrder itemsInSingleOrder, date, ordStatus, PayMode string, amt float64) {
+func GetSingleOredrDetails(OrderID string) (operationStatus bool, ItemsInOrder itemsInSingleOrder, date, ordStatus, PayMode string, amt float64) {
 	selDB, err := Connection.Query("SELECT order_date,order_status,order_amt,p_mode from order_master WHERE order_id= " + OrderID)
 	if err != nil {
 		fmt.Println(err)
@@ -280,7 +281,7 @@ func GetSingleOredrDetails(OrderID string) (operationStatus bool,ItemsInOrder it
 	}
 
 	//Now Collect Multtiple Items ( maye contain single item only in one order :) , in this order
-	var item ord // we are picking one by one. adding to the struct array 
+	var item ord // we are picking one by one. adding to the struct array
 	selDB, err = Connection.Query("select order_detail.item_id,item_master.item_desc,item_master.item_sel_price,item_master.item_unit,order_detail.item_qty FROM order_master INNER JOIN order_detail ON order_master.order_id = order_detail.order_id INNER JOIN item_master ON order_detail.item_id = item_master.item_id WHERE order_master.order_id=" + OrderID)
 	if err != nil {
 		fmt.Println(err)
@@ -297,9 +298,9 @@ func GetSingleOredrDetails(OrderID string) (operationStatus bool,ItemsInOrder it
 			fmt.Println(err)
 			return
 		}
-		ItemsInOrder = append ( ItemsInOrder,item) // making a collection of all items in our oder 
+		ItemsInOrder = append(ItemsInOrder, item) // making a collection of all items in our oder
 	}
 	// okay done the job
-	operationStatus = true 
+	operationStatus = true
 	return
 }
