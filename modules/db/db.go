@@ -31,11 +31,11 @@ type order struct {
 }
 
 type ord struct { // using only while fetching single order details for user
-	ID    int
-	Desc  string
-	Price float64
-	Unit  string
-	Qty   int
+	ID       int
+	Desc     string
+	Price    float64
+	Unit     string
+	Qty      int
 	SubTotal float64 // This is must while listing single order details
 }
 type itemsInSingleOrder []ord
@@ -184,15 +184,15 @@ func GetLastItemID() (count int) {
 	return
 }
 
-//GetItemDescAndRate ... to prepate structure for rendering
-func GetItemDescAndRate(itemID string) (itemDesc string, itemRate float64, unit string) {
-	//strSQL := fmt.Sprintf("%s%s","SELECT item_desc,item_sel_price FROM item_master WHERE item_id=", itemID)
-	selDB, err := Connection.Query("SELECT item_desc,item_sel_price,item_unit FROM item_master WHERE item_id=" + itemID)
+//GetItemDetails ... to prepate structure for rendering
+func GetItemDetails(itemID string) (itemDesc string, itemRate float64, unit string,itmID,itmStock int,itmBuyRate float64) {
+	//item_id,,,item_stock,,item_buy_price
+	selDB, err := Connection.Query("SELECT item_desc,item_sel_price,item_unit,item_id,item_stock,item_buy_price FROM item_master WHERE item_id=" + itemID)
 	if err != nil {
 		panic(err.Error())
 	}
 	for selDB.Next() {
-		err = selDB.Scan(&itemDesc, &itemRate, &unit)
+		err = selDB.Scan(&itemDesc, &itemRate, &unit,&itmID,&itmStock,&itmBuyRate)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -314,5 +314,36 @@ func GetSingleOredrDetails(OrderID string) (operationStatus bool, ItemsInOrder i
 	}
 	// okay done the job
 	operationStatus = true
+	return
+}
+
+//DelitemFromMaster ...
+func DelitemFromMaster(itemID string) (oprationStatus bool) {
+	delForm, err := Connection.Prepare("DELETE FROM item_master WHERE item_id= ?")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	_, err = delForm.Exec(itemID)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	oprationStatus = true
+	return
+}
+//UpdateItemInMaster ...
+func UpdateItemInMaster(itemID string) (oprationStatus bool) {
+	delForm, err := Connection.Prepare("DELETE FROM item_master WHERE item_id= ?")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	_, err = delForm.Exec(itemID)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	oprationStatus = true
 	return
 }

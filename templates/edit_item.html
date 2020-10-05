@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>{{.title}}</title>
+  </head>
+  <body style="background-color: rgb(192, 215, 228);">
+    <div class="alert alert-warning alert-dismissible fade show" role="alert" style="display: {{.diplay}};">
+      <strong>Can't Delete!!</strong>This item is already in User's Order Record.
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+  </div>
+    <div class="container my-5">
+        <div class="lg-12" style="text-align: center; border: 0px;"><p>Edit Item</p></div>
+        <form id="editForm" action="/viewandedititem" method="post" enctype="multipart/form-data" onsubmit="return verify_inputs()">
+          <input id="optedto" name='action' style="visibility:hidden"  value="">  <!-- to pass which operation to do -->
+            <div class="lg-12 " style="border: 0px;"><!--Main DIV rightSide-->
+                <div id="stock_adj" style="display: block;">
+                  <!-- <div class="card"></div> -->
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">ItemCode</th>
+                        <th scope="col">Fish Name</th>
+                        <th scope="col">Unit</th>
+                        <th scope="col">Purch Price</th>
+                        <th scope="col">Selling Price</th>
+                        <th scope="col">Stock</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th scope="row"> <input name="icode" class="w-25" type="text" value="{{.itmID}}" readonly></th>
+                        <td><input required="true" type="text"  value="{{ .itmDesc }}"></td>
+                        <td><input type="text" class="w-25" value="{{ .itmUnit }}" readonly></td>
+                        <td><input type="text" class="w-25" value="{{ .itmBuyPrice }}" readonly></td>
+                        <td><input type="text" class="w-25" value="{{ .itmSelRate }}" readonly></td>
+                        <td><input type="text" class="w-25" value="{{ .itmStock }}" readonly></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>                
+              </form>
+            </div>
+            <div class="row float-right mt-3 p-5">
+              <div class="lg-4">
+              <div id="update" onclick="setOperation(this.id)" class="admn_buttons btn btn-primary m-1">Update</div>
+              <div id="delete" onclick="setOperation(this.id)" class="admn_buttons btn btn-primary m-1">Delete</div>
+              <div id="goback" class="admn_buttons btn btn-primary m-1">Back to Panel</div>
+              <!-- <div id="logout" onclick="location.href='http://debian:8080/logout';" class="admn_buttons btn btn-primary m-1">Logout</div> -->
+              <!-- <div id="logout" onclick="location.href='http://debian:8080/logout';" class="admn_buttons btn btn-primary m-1">Logout</div><br> -->
+          </div>
+      </div>
+    </div>
+   
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <!-- Toggle control-->
+    <script>
+    function setOperation(clicked_id) { // Based on this value need to do Update/Delete operation in POST function
+        
+        if (confirm('Are you sure you want to Proceed?')) {
+            // Save it!
+            document.getElementById("optedto").value = clicked_id
+            document.getElementById("editForm").submit();
+        } else {
+            // Do nothing!
+            //  
+        }
+    }
+    //verifyInput
+    function verify_inputs(){
+      alert("sdsdsds")
+    }
+  </script>
+    
+    <!-- //   //Verify Inputs
+    //   // function  verify_inputs(){
+    //     // var operation = document.getElementById("optedto").value 
+    //     // if (operation == "purchase"){
+    //     //       var fishid = document.getElementById("fishname").value
+    //     //       var pPrice = document.getElementById("p_price").value;
+    //     //       var sPrice = document.getElementById("s_price").value;
+    //     //       var pQty = document.getElementById("p_qty").value;
+    //     //       if (fishid=="SEL" || pPrice =="" || sPrice=="" || pQty==""  ){
+    //     //           alert("Please Provide all Imputs !!")
+    //     //           return false
+    //     //       }
+    //     //       alert("Details Updated Successfully!!")
+    //     // }else if(operation == "category"){
+    //     //   var fileName = document.getElementById("f_name").value
+    //     //   var newCategory = document.getElementById("new_cat").value
+    //     //   var unit = document.getElementById("unit").value
+    //     //   if (unit=="SEL" || fileName =="" || newCategory=="" ){
+    //     //           alert("Please Provide all Imputs !!")
+    //     //           return false
+    //     //       }
+    //     //       alert("Details Updated Successfully!!")
+    //     // }else if(operation == "stockadj"){
+    //     //   var stockAdjto = document.getElementById("adj_qty").value
+    //     //   var selectedFish = document.getElementById("fish_name").value
+    //     //   if (selectedFish=="SEL" || stockAdjto < 0 ){
+    //     //           alert("Please Provide all Imputs !!")
+    //     //           return false
+    //     //       }
+    //     //       alert("Details Updated Successfully!!")
+    //     // }
+
+    //   // }
+
+    //   //Allow only Number
+    // function isNumber(evt) {
+    //   evt = (evt) ? evt : window.event;
+    //   var charCode = (evt.which) ? evt.which : evt.keyCode;
+    //   if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+    //       return false;
+    //   }
+    // return true;
+    // }
+      //  -->
+      <!-- <script>
+          function preback(){
+            window.history.forward();
+        }
+        setTimeout("preback()",0);
+        window.onunload=function(){null};
+       </script> -->
+    <!--End-->
+    <style>
+.admn_buttons{
+  width: 150px;
+
+}
+    </style>
+  </body>
+</html>
