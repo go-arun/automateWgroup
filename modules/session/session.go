@@ -167,21 +167,21 @@ func UserCredentialsVerify(mobNum string) (userExist bool, custID int, custName 
 }
 
 //SessinStatus ...return true if there is an active admin session
-func SessinStatus(c *gin.Context, cookieName string) (sesStatus bool) {
+func SessinStatus(c *gin.Context, cookieName string) (sesStatus bool,usrORadminName string) {
 	sessionCookie, _ := c.Cookie(cookieName)
 	if sessionCookie == "" { // no cookie found
-		return sesStatus // by default 'recordFound' val will be false
+		return  // by default 'recordFound' val will be false
 	} //cookie received frim browser still we need to ensure from database too
 	if cookieName == "admin_session_cookie" { // divert here based on which sesid user/admin
-		sesStatus, _ = db.TraceAdminWithSIDinDB(sessionCookie)
+		sesStatus, usrORadminName = db.TraceAdminWithSIDinDB(sessionCookie)
 	} else if cookieName == "user_session_cookie" {
-		sesStatus, _,_,_,_,_ = db.TraceUserWithSIDinDB(sessionCookie)
+		sesStatus, _,usrORadminName,_,_,_ = db.TraceUserWithSIDinDB(sessionCookie)
 	} else { // then it is about temp_sesid go ahed
 		sesStatus = db.TraceTempSIDinDB(sessionCookie)
 	}
 
-	fmt.Println(cookieName, " Session Exists Status --> ?", sesStatus)
-	return sesStatus //
+	fmt.Println(cookieName, " Session Exists Status --> ?", sesStatus,"for usr/admin",usrORadminName)
+	return  //
 }
 
 //SetAdminSessionCookie ...

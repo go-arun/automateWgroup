@@ -145,7 +145,7 @@ func addNewCatagory(c *gin.Context) {
 
 func adminGet(c *gin.Context) {
 	//Checking for any active sessions
-	IsSectionActive := session.SessinStatus(c, "admin_session_cookie")
+	IsSectionActive,_ := session.SessinStatus(c, "admin_session_cookie")
 	if IsSectionActive {
 		populateCategoryItems(c)
 	} else {
@@ -203,7 +203,7 @@ func adminPanelPost(c *gin.Context) {
 
 func adminPanelGet(c *gin.Context) {
 	//Checking for any active sessions
-	IsSectionActive := session.SessinStatus(c, "admin_session_cookie")
+	IsSectionActive,_ := session.SessinStatus(c, "admin_session_cookie")
 	if IsSectionActive {
 		populateCategoryItems(c)
 	} else {
@@ -220,6 +220,13 @@ func logoutGet(c *gin.Context) {
 }
 
 func userIndexGet(c *gin.Context) {
+	// Logic to show User name in navbar
+	IsUsrSectionActive,usrName := session.SessinStatus(c, "user_session_cookie")
+	if !IsUsrSectionActive {
+		usrName = "Sign In"
+	}
+
+
 	//For safer side alway clear cart
 	session.Cart = nil
 
@@ -256,6 +263,7 @@ func userIndexGet(c *gin.Context) {
 		http.StatusOK,
 		"user_index.html", gin.H{
 			"AvailableSock": itemCollection,
+			"usrName"	   : usrName,
 		})
 
 }
@@ -305,7 +313,7 @@ func userIndexPost(c *gin.Context) {
 	}
 
 	//Checking for any active sessions
-	IsUsrSectionActive := session.SessinStatus(c, "user_session_cookie")
+	IsUsrSectionActive,_ := session.SessinStatus(c, "user_session_cookie")
 	if IsUsrSectionActive { // Moving to Orders page
 		fmt.Println("user asession is actice -- So Moving from landing page to Oreder ")
 		c.Redirect(http.StatusTemporaryRedirect, "/orders")
@@ -334,7 +342,7 @@ func userIndexPost(c *gin.Context) {
 
 func userLoginGet(c *gin.Context) {
 	//Checking for any active sessions
-	IsUsrSectionActive := session.SessinStatus(c, "user_session_cookie")
+	IsUsrSectionActive,_ := session.SessinStatus(c, "user_session_cookie")
 	if IsUsrSectionActive {
 		//Move to Item lising page TBD
 	} else {
@@ -420,6 +428,11 @@ func userOrdersGet(c *gin.Context) {
 	)
 }
 func userOrdersPost(c *gin.Context) { // Redirected from IndexpagePost event
+		// Logic to show User name in navbar
+		IsUsrSectionActive,usrName := session.SessinStatus(c, "user_session_cookie")
+		if !IsUsrSectionActive {
+			usrName = "Sign In"
+		}
 	cartItems := session.PullCartItemFromCookie(c) // Return a struct array of cart items retrived from Cookies
 	var singleCartItem CartItem
 	var fullCartItems []CartItem
@@ -449,6 +462,7 @@ func userOrdersPost(c *gin.Context) { // Redirected from IndexpagePost event
 			"ItemsOrdered":    fullCartItems,
 			"TotalAmt":        TotalAmtString,
 			"TotalAmtInPaisa": TotalAmtInPaisa,
+			"usrName"	:	usrName,
 		},
 	)
 
@@ -500,7 +514,7 @@ func orderconfirmPost(c *gin.Context) { // Execuet this after selecting payment 
 //To show order details-while accessing from NAV bar
 // if the user is logged in - otherwise skip to login page
 func orderHistoryGet(c *gin.Context) {
-	IsUsrSectionActive := session.SessinStatus(c, "user_session_cookie")
+	IsUsrSectionActive,_ := session.SessinStatus(c, "user_session_cookie")
 	if !IsUsrSectionActive {
 		c.HTML(
 			http.StatusOK,
@@ -531,7 +545,7 @@ func orderHistoryGet(c *gin.Context) {
 }
 
 func orderHistoryPost(c *gin.Context) { //Will execute this After placing an order(& payment)
-	IsUsrSectionActive := session.SessinStatus(c, "user_session_cookie")
+	IsUsrSectionActive,usrName := session.SessinStatus(c, "user_session_cookie")
 	if IsUsrSectionActive { // Dont want to entertain guest users herer !!!
 		payMode := c.PostForm("paymentMode")
 		if payMode != "cod"{ payMode = "online"} // will not get the value if it comes from Online payment page, so setting it here
@@ -573,6 +587,7 @@ func orderHistoryPost(c *gin.Context) { //Will execute this After placing an ord
 			"orderhistory.html",
 			gin.H{"title": "User Login",
 				"OrderHistrory": UserOrderHosory,
+				"usrName"	   : usrName,
 			},
 		)
 	} else { // User is not logged in so do that first
