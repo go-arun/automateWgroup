@@ -17,7 +17,7 @@
               <div class="lg-4">
               <div id="purchase" onclick="toggleCtrls(this.id)" class="admn_buttons btn btn-primary m-1">Purchase</div><br>
               <div id="orders" class="admn_buttons btn btn-primary m-1">Execure Orders</div><br>
-              <div id="stockadj" onclick="toggleCtrls(this.id)" class="admn_buttons btn btn-primary m-1">Stock Adjust</div><br>
+              <div id="stockadj" onclick="toggleCtrls(this.id)" class="admn_buttons btn btn-primary m-1">View Stock List</div><br>
               <div id="category" onclick="toggleCtrls(this.id)" class="admn_buttons btn btn-primary m-1">New Fish Catgory</div><br>
               <div id="reports" class="admn_buttons btn btn-primary m-1">Reports</div><br>
               <div id="logout" onclick="location.href='http://debian:8080/logout';" class="admn_buttons btn btn-primary m-1">Logout</div><br>
@@ -51,16 +51,33 @@
                     <input class="m-1" type="submit" value="Update" />
                 </div>
                 <div id="stock_adj" style="display: none;">
-                  <select  onchange="change_ImageToo()" name="fish_name" id="fish_name" style="width: 192px;">
-                    <option value="SEL" >Select Fish</option>
-                    {{ range .FishCatagories }}
-                      <option value="{{.ID}}">{{.Name}}[{{.Stock}} {{.Unit}}]</option>
-                    {{ end }}
-                  </select>
-                  <input id="adj_qty" class="m-1" type="text" placeholder="Enter Quandity" name="adj_qty" onkeypress="return isNumber(event)" >
-                  <div class="card"></div>
-                  <img id="fish_Img" class="m-1" src="http://debian:8080/file/SEL.jpg" style="border: 1px solid #555;" alt="Fish Pic" width="190" height="150"><br>
-                  <input class="m-1" type="submit" value="Update" />
+                  <!-- <div class="card"></div> -->
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">ItemCode</th>
+                        <th scope="col">Fish Name</th>
+                        <th scope="col">Unit</th>
+                        <th scope="col">Purch Price</th>
+                        <th scope="col">Selling Price</th>
+                        <th scope="col">Stock</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {{ range .FishCatagories }}
+                      <tr>
+                        <!-- <th scope="row">{{ .ID }}</th> -->
+                        <th scope="row"><a href="/viewandedititem?ordid={{ .ID }}">{{.ID}}</a></th>
+                        <td>{{ .Name }}</td>
+                        <td>{{ .Unit }}</td>
+                        <td>{{ .PurchRate }}</td>
+                        <td>{{ .Rate }}</td>
+                        <td> {{ .Stock }} </td>
+                      </tr>
+                      {{ end }}
+                    </tbody>
+                  </table>
+
               </div>                
               </form>
             

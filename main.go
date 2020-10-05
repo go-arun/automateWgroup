@@ -27,7 +27,9 @@ type Item struct {
 	ID, Stock  int
 	Name, Unit string
 	Rate       float64
+	PurchRate  float64
 	IsUnitKg   bool // will display numbers/KG based on this, while listing items in user_index.html page
+
 }
 
 //CartItem ... to store cart items retrieved from Cokkies to Render
@@ -78,8 +80,8 @@ func updateStock(c *gin.Context) {
 		gin.H{"title": "Admin Panel"},
 	)
 }
-func populateCategoryItems(c *gin.Context) {
-	selDB, err := db.Connection.Query("SELECT item_id,item_desc,item_unit,item_stock FROM item_master")
+func populateCategoryItems(c *gin.Context) { // later move to db Module TBD
+	selDB, err := db.Connection.Query("SELECT item_id,item_desc,item_unit,item_stock,item_sel_price,item_buy_price FROM item_master ORDER BY  item_stock DESC")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -92,7 +94,8 @@ func populateCategoryItems(c *gin.Context) {
 		var name string
 		var unit string
 		var stk int
-		err = selDB.Scan(&id, &name, &unit, &stk)
+		var itemSelPrice,itemBuyprice float64
+		err = selDB.Scan(&id, &name, &unit, &stk,&itemSelPrice,&itemBuyprice)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -100,6 +103,8 @@ func populateCategoryItems(c *gin.Context) {
 		item.Name = name
 		item.Unit = unit
 		item.Stock = stk
+		item.Rate = itemSelPrice
+		item.PurchRate = itemBuyprice
 
 		itemCollection = append(itemCollection, item)
 	}
