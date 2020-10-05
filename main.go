@@ -514,7 +514,7 @@ func orderconfirmPost(c *gin.Context) { // Execuet this after selecting payment 
 //To show order details-while accessing from NAV bar
 // if the user is logged in - otherwise skip to login page
 func orderHistoryGet(c *gin.Context) {
-	IsUsrSectionActive,_ := session.SessinStatus(c, "user_session_cookie")
+	IsUsrSectionActive,usrName := session.SessinStatus(c, "user_session_cookie")
 	if !IsUsrSectionActive {
 		c.HTML(
 			http.StatusOK,
@@ -537,6 +537,7 @@ func orderHistoryGet(c *gin.Context) {
 			"orderhistory.html",
 			gin.H{"title": "Orders",
 				"OrderHistrory": UserOrderHisory,
+				"usrName"	:	usrName,
 			},
 		)
 
@@ -605,7 +606,7 @@ func orderHistoryPost(c *gin.Context) { //Will execute this After placing an ord
 // To disply any particulr Order
 func viewAnyOrderGet(c *gin.Context) {
 	OrdID := c.Request.URL.Query()["ordid"][0] // Getting Order ID passed with URL
-	//number : map[ordid:[17]]
+	_,usrName := session.SessinStatus(c, "user_session_cookie")
 	fmt.Println("Wnat to see the order details of order number ", OrdID)
 	oK, itemsList, date, status, PayMode, amt := db.GetSingleOredrDetails(OrdID)
 	if !oK {
@@ -628,6 +629,7 @@ func viewAnyOrderGet(c *gin.Context) {
 			"PayMode":      PayMode,
 			"amt":          amt,
 			"OrdStatus":    status,
+			"usrName" 	: usrName,
 
 			// "TotalAmt":        TotalAmtString,
 			// "TotalAmtInPaisa": TotalAmtInPaisa,
