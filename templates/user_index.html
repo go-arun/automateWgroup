@@ -56,8 +56,8 @@
           <div class="col border-top border-bottom border-top border-primary">
             <h4>{{ .Name}}</h4>
             <h4>Rs.{{ .Rate}}/{{.Unit}}</h4>
-             <h4> inStock:{{.Stock}}</h4>
-            <select  name="{{ .ID }}" id="f{{.ID}}" style="width: 100px;">
+             <h4 id=s{{.ID}}> inStock:{{.Stock}}</h4>
+            <select  name="{{ .ID }}" id="f{{.ID}}" onchange="verifyWithStock(this.id)" style="width: 100px;">
               <!-- <select cname="f_qty" id="f_qty" style="width: 192px;"> -->
               {{ if .IsUnitKg }}
                 <option value="Qty" >Select KG</option>
@@ -128,6 +128,19 @@
       return false
       }
 
+    //Don't allow to opt more than available stock
+    function verifyWithStock(clickedID){
+      var optedQty = parseInt(document.getElementById(clickedID).value)
+      var stockLabelID = clickedID.replace(/f/g, "s") // replacing f with s to match the stocklabel Id 
+      var availableStk = document.getElementById(stockLabelID).textContent
+      availableStk = parseInt(availableStk.replace(/inStock:/g,"")) // Just trimmed to make it looks like a digt and parsed to int
+     // alert(optedQty +  availableStk)
+      if (availableStk < optedQty){
+          alert ("Sorry!! We don't have this much in Stock, Available Stock is:" + availableStk)
+           document.getElementById(clickedID).selectedIndex = 0 // Hey Why cant we set value to Avaialble stock .. TBD
+          alert(clickedID)
+      }
+    }
     </script>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
