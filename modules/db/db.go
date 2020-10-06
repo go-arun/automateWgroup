@@ -23,12 +23,12 @@ type Admin struct {
 }
 
 type order struct {
-	ID      int
-	Date    string
+	ID       int
+	Date     string
 	CustName string
-	Amt     float64
-	Status  string
-	PayMode string
+	Amt      float64
+	Status   string
+	PayMode  string
 }
 
 type ord struct { // using only while fetching single order details for user
@@ -186,14 +186,14 @@ func GetLastItemID() (count int) {
 }
 
 //GetItemDetails ... to prepate structure for rendering
-func GetItemDetails(itemID string) (itemDesc string, itemRate float64, unit string,itmID,itmStock int,itmBuyRate float64) {
+func GetItemDetails(itemID string) (itemDesc string, itemRate float64, unit string, itmID, itmStock int, itmBuyRate float64) {
 	//item_id,,,item_stock,,item_buy_price
 	selDB, err := Connection.Query("SELECT item_desc,item_sel_price,item_unit,item_id,item_stock,item_buy_price FROM item_master WHERE item_id=" + itemID)
 	if err != nil {
 		panic(err.Error())
 	}
 	for selDB.Next() {
-		err = selDB.Scan(&itemDesc, &itemRate, &unit,&itmID,&itmStock,&itmBuyRate)
+		err = selDB.Scan(&itemDesc, &itemRate, &unit, &itmID, &itmStock, &itmBuyRate)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -260,7 +260,7 @@ func GetOrderHistory(custID int) (operationStatus bool, UsrOrderHistory Orders) 
 	if custID != 0 { //pic details of this user
 		fmt.Println("Tarcing Oder hostory of Custer having ID:", custID)
 		strSQL = "SELECT order_id,order_date,order_amt,order_status,p_mode from order_master WHERE cust_id= " + strconv.Itoa(custID)
-	}else{// pic all pending orders
+	} else { // pic all pending orders
 		strSQL = "SELECT order_master.order_id,order_master.order_date,cust_master.cust_name,order_master.order_amt,order_master.order_status,order_master.p_mode FROM order_master INNER JOIN cust_master ON order_master.cust_id=cust_master.cust_id WHERE order_master.order_status='pending'"
 	}
 
@@ -270,7 +270,7 @@ func GetOrderHistory(custID int) (operationStatus bool, UsrOrderHistory Orders) 
 		return
 	}
 	// Here also based on rquest ( need all pending OR only one based on CustID) , Parameters in Scan also differe
-	if custID != 0{
+	if custID != 0 {
 		for selDB.Next() {
 			err = selDB.Scan(&singleOrder.ID, &singleOrder.Date, &singleOrder.Amt, &singleOrder.Status, &singleOrder.PayMode)
 			if err != nil {
@@ -279,9 +279,9 @@ func GetOrderHistory(custID int) (operationStatus bool, UsrOrderHistory Orders) 
 			}
 			UsrOrderHistory = append(UsrOrderHistory, singleOrder)
 		}
-	}else{
+	} else {
 		for selDB.Next() {
-			err = selDB.Scan(&singleOrder.ID, &singleOrder.Date, &singleOrder.Amt, &singleOrder.Status, &singleOrder.PayMode)
+			err = selDB.Scan(&singleOrder.ID, &singleOrder.Date, &singleOrder.CustName, &singleOrder.Amt, &singleOrder.Status, &singleOrder.PayMode)
 			if err != nil {
 				fmt.Println(err)
 				return
@@ -349,14 +349,15 @@ func DelitemFromMaster(itemID string) (oprationStatus bool) {
 	oprationStatus = true
 	return
 }
+
 //UpdateItemInMaster ...
-func UpdateItemInMaster(itemID,itemDesc string,Pprice,Sprice string,stock string) (oprationStatus bool) {
+func UpdateItemInMaster(itemID, itemDesc string, Pprice, Sprice string, stock string) (oprationStatus bool) {
 	updateForm, err := Connection.Prepare("UPDATE item_master SET item_desc=?,item_buy_price=?,item_sel_price=?,item_stock=? WHERE item_id=?")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	_, err = updateForm.Exec(itemDesc,Pprice,Sprice,stock,itemID)
+	_, err = updateForm.Exec(itemDesc, Pprice, Sprice, stock, itemID)
 	if err != nil {
 		fmt.Println(err)
 		return

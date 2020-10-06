@@ -16,8 +16,9 @@ import (
 	razorpay "github.com/razorpay/razorpay-go"
 )
 
-constant (
-	ALL_RECORDS = 0
+const (
+	//all_Records ... for using while picking  Orders 
+	all_Records = 0
 )
 
 // to store otp_id received from SMS API Provider
@@ -756,14 +757,17 @@ func viewandedititemPost(c *gin.Context) {
 	}
 }
 
-func ordersAdminViewGet(c *gin.Context){
-	pendingOrders := db.GetOrderHistory(ALL_RECORDS)
+func ordersAdminViewGet(c *gin.Context) {
+	oK,pendingOrders := db.GetOrderHistory(all_Records)
+	if !oK{
+		fmt.Println("Something Wrong Happened while picking all pending orders")
+	}
 	c.HTML(
 		http.StatusOK,
 		"orders_adminview.html", gin.H{
-			"delWarning"	:   "none",
-			"updateSucess"	: "block",
-			"PendingOrders" : pendingOrders,
+			"delWarning":    "none",
+			"updateSucess":  "block",
+			"PendingOrders": pendingOrders,
 		})
 }
 func main() {
@@ -779,7 +783,7 @@ func main() {
 	router.StaticFS("/file", http.Dir("pics"))
 	router.GET("/viewandedititem", viewandedititemGet)
 	router.POST("/viewandedititem", viewandedititemPost)
-	router.GET("/ordersadminview",ordersAdminViewGet)
+	router.GET("/ordersadminview", ordersAdminViewGet)
 	//user Routes
 	router.GET("/", userIndexGet)
 	router.POST("/", userIndexPost)
