@@ -596,7 +596,7 @@ func orderHistoryPost(c *gin.Context) { //Will execute this After placing an ord
 			iCode, _ := strconv.Atoi(cartItems[key].ICode)
 			iQty, _ := strconv.Atoi(cartItems[key].IQty)
 			fmt.Println("icode and iqty", iCode, iQty)
-			okay := db.UpdateOrderDetails(newOrderID, iCode, iQty)
+			okay := db.AddNewOrderDetails(newOrderID, iCode, iQty)
 			if !okay {
 				fmt.Println("Error in inserting to Order details ....")
 			}
@@ -798,6 +798,18 @@ func orderAdminApproveGet(c *gin.Context) {
 		},
 	)
 }
+
+func adminOrderApprove(c *gin.Context) {
+
+	ordID := c.PostForm("ordID")
+	oK := db.UpdateOrderStatusToApproved(ordID)
+	if !oK {
+		fmt.Println(" Changing Order Status  to Approved Failed !!")
+	}
+	ordersAdminViewGet(c)
+
+}
+
 func main() {
 	db.Connect() //db Connection
 	router := gin.Default()
@@ -813,6 +825,8 @@ func main() {
 	router.POST("/viewandedititem", viewandedititemPost)
 	router.GET("/ordersadminview", ordersAdminViewGet)
 	router.GET("/orderadminapprove", orderAdminApproveGet) // To View and approve, Selected Order from above function
+	router.POST("/adminorderapprove", adminOrderApprove)   // Once approve button pressed , calling this func
+
 	//user Routes
 	router.GET("/", userIndexGet)
 	router.POST("/", userIndexPost)

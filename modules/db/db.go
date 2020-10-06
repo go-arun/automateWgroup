@@ -228,8 +228,8 @@ func AddNewOrderEntry(custID int, orderAmt float64, modeOfPay string) (operation
 	return
 }
 
-//UpdateOrderDetails ...
-func UpdateOrderDetails(orderID, itemID, itemQty int) (operationStatus bool) {
+//AddNewOrderDetails ...
+func AddNewOrderDetails(orderID, itemID, itemQty int) (operationStatus bool) {
 	insForm, err := Connection.Prepare(
 		"INSERT INTO order_detail(order_id,item_id,item_qty) VALUES (?,?,?)",
 	)
@@ -364,4 +364,21 @@ func UpdateItemInMaster(itemID, itemDesc string, Pprice, Sprice string, stock st
 	}
 	oprationStatus = true
 	return
+}
+
+//UpdateOrderStatusToApproved ...
+func UpdateOrderStatusToApproved(ordID string) (operationStatus bool) {
+	updateForm, err := Connection.Prepare("UPDATE order_master SET order_status='approved' WHERE order_id=?")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	_, err = updateForm.Exec(ordID)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	operationStatus = true
+	return
+
 }
