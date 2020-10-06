@@ -257,11 +257,13 @@ func AddNewOrderDetails(orderID, itemID, itemQty int) (operationStatus bool) {
 func GetOrderHistory(custID int) (operationStatus bool, UsrOrderHistory Orders) {
 	var singleOrder order
 	var strSQL string
-	if custID != 0 { //pic details of this user
+	if custID > 0 { //pic details of this user
 		fmt.Println("Tarcing Oder hostory of Custer having ID:", custID)
 		strSQL = "SELECT order_id,order_date,order_amt,order_status,p_mode from order_master WHERE cust_id= " + strconv.Itoa(custID)
-	} else { // pic all pending orders
+	}else if(custID == 0){ // Pick all to show in Order view of Admin
 		strSQL = "SELECT order_master.order_id,order_master.order_date,cust_master.cust_name,order_master.order_amt,order_master.order_status,order_master.p_mode FROM order_master INNER JOIN cust_master ON order_master.cust_id=cust_master.cust_id WHERE order_master.order_status='pending'"
+	}else { // pic all pending orders
+		strSQL = "SELECT order_master.order_id,order_master.order_date,cust_master.cust_name,order_master.order_amt,order_master.order_status,order_master.p_mode FROM order_master INNER JOIN cust_master ON order_master.cust_id=cust_master.cust_id"
 	}
 
 	selDB, err := Connection.Query(strSQL)
@@ -270,7 +272,7 @@ func GetOrderHistory(custID int) (operationStatus bool, UsrOrderHistory Orders) 
 		return
 	}
 	// Here also based on rquest ( need all pending OR only one based on CustID) , Parameters in Scan also differe
-	if custID != 0 {
+	if custID > 0 {
 		for selDB.Next() {
 			err = selDB.Scan(&singleOrder.ID, &singleOrder.Date, &singleOrder.Amt, &singleOrder.Status, &singleOrder.PayMode)
 			if err != nil {

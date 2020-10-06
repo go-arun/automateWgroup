@@ -18,7 +18,8 @@ import (
 
 const (
 	//all_Records ... for using while picking  Orders
-	all_Records = 0
+	allRecords        = -1
+	allPendingRecords = 0
 )
 
 // to store otp_id received from SMS API Provider
@@ -632,7 +633,7 @@ func orderHistoryPost(c *gin.Context) { //Will execute this After placing an ord
 }
 
 // To disply any particulr Order
-func viewAnyOrderGet(c *gin.Context) {
+func viewAnyOrderGet(c *gin.Context) { //admin also have the same view , later combine those two func TBD
 	OrdID := c.Request.URL.Query()["ordid"][0] // Getting Order ID passed with URL
 	_, usrName := session.SessinStatus(c, "user_session_cookie")
 	fmt.Println("Wnat to see the order details of order number ", OrdID)
@@ -758,7 +759,7 @@ func viewandedititemPost(c *gin.Context) {
 }
 
 func ordersAdminViewGet(c *gin.Context) {
-	oK, pendingOrders := db.GetOrderHistory(all_Records)
+	oK, pendingOrders := db.GetOrderHistory(allPendingRecords)
 	if !oK {
 		fmt.Println("Something Wrong Happened while picking all pending orders")
 	}
@@ -800,16 +801,62 @@ func orderAdminApproveGet(c *gin.Context) {
 }
 
 func adminOrderApprove(c *gin.Context) {
-
+	//Entertain only if there is an active admin TBD
 	ordID := c.PostForm("ordID")
 	oK := db.UpdateOrderStatusToApproved(ordID)
 	if !oK {
 		fmt.Println(" Changing Order Status  to Approved Failed !!")
 	}
 	ordersAdminViewGet(c)
-
 }
 
+func reportViewAllOrders(c *gin.Context) {
+	oK, allOrders := db.GetOrderHistory(allRecords)
+	if !oK {
+		fmt.Println("Something Wrong Happened while picking all pending orders")
+	}
+	c.HTML(
+		http.StatusOK,
+		"report_allorders.html", gin.H{
+			"delWarning":   "none",
+			"updateSucess": "block",
+			"allOrders":    allOrders,
+		})
+
+}
+func reportViewSingleOrderDetails(c *gin.Context){
+	OrdID := c.Request.URL.Query()["ordid"][0] // Getting Order ID passed with URL
+	_, usrName := session.SessinStatus(c, "user_session_cookie")
+	fmt.Println("Wnat to see the order details of order number ", OrdID)
+	oK, itemsList, date, status, PayMode, amt := db.GetSingleOredrDetails(OrdID)
+	if !oK {
+		fmt.Println("Something went wrong while picking Single Order Deatils ..Please have a look")
+	}
+	fmt.Println(oK, itemsList, date, status, PayMode, amt)
+	//		subTotalToFloat, _ := strconv.ParseFloat(singleCartItem.SubTotal, 64)
+	//		TotalAmt = TotalAmt + subTotalToFloat
+	//	TotalAmtInPaisa := TotalAmt * 100 // This is required while initate for payment in Razorpay
+
+	//	TotalAmtString := fmt.Sprintf("%.2f", TotalAmt)
+
+	c.HTML(
+		http.StatusOK,
+		"report_order.html",
+		gin.H{"title": "OrderDetail",
+			"ItemsOrdered": itemsList,
+			"OrdID":        OrdID,
+			"date":         date,
+			"PayMode":      PayMode,
+			"amt":          amt,
+			"OrdStatus":    status,
+			"usrName":      usrName,
+
+			// "TotalAmt":        TotalAmtString,
+			// "TotalAmtInPaisa": TotalAmtInPaisa,
+		},
+	)
+
+}
 func main() {
 	db.Connect() //db Connection
 	router := gin.Default()
@@ -826,6 +873,8 @@ func main() {
 	router.GET("/ordersadminview", ordersAdminViewGet)
 	router.GET("/orderadminapprove", orderAdminApproveGet) // To View and approve, Selected Order from above function
 	router.POST("/adminorderapprove", adminOrderApprove)   // Once approve button pressed , calling this func
+	router.GET("/reportallorders", reportViewAllOrders)    //Just viewing all orders irespective of order status
+	router.GET("/reportorder",reportViewSingleOrderDetails) // to view a particualr order details by admin
 
 	//user Routes
 	router.GET("/", userIndexGet)
