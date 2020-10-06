@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	//all_Records ... for using while picking  Orders 
+	//all_Records ... for using while picking  Orders
 	all_Records = 0
 )
 
@@ -758,8 +758,8 @@ func viewandedititemPost(c *gin.Context) {
 }
 
 func ordersAdminViewGet(c *gin.Context) {
-	oK,pendingOrders := db.GetOrderHistory(all_Records)
-	if !oK{
+	oK, pendingOrders := db.GetOrderHistory(all_Records)
+	if !oK {
 		fmt.Println("Something Wrong Happened while picking all pending orders")
 	}
 	c.HTML(
@@ -769,6 +769,34 @@ func ordersAdminViewGet(c *gin.Context) {
 			"updateSucess":  "block",
 			"PendingOrders": pendingOrders,
 		})
+}
+
+// Almost same function for viewing order for user too, so later combine it as single func TBD
+func orderAdminApproveGet(c *gin.Context) {
+	OrdID := c.Request.URL.Query()["ordid"][0] // Getting Order ID passed with URL
+	_, usrName := session.SessinStatus(c, "user_session_cookie")
+	fmt.Println("Wnat to see the order details of order number ", OrdID)
+	oK, itemsList, date, status, PayMode, amt := db.GetSingleOredrDetails(OrdID)
+	if !oK {
+		fmt.Println("Something went wrong while picking Single Order Deatils ..Please have a look")
+	}
+	fmt.Println(oK, itemsList, date, status, PayMode, amt)
+	c.HTML(
+		http.StatusOK,
+		"order_adminview.html",
+		gin.H{"title": "OrderDetail",
+			"ItemsOrdered": itemsList,
+			"OrdID":        OrdID,
+			"date":         date,
+			"PayMode":      PayMode,
+			"amt":          amt,
+			"OrdStatus":    status,
+			"usrName":      usrName,
+
+			// "TotalAmt":        TotalAmtString,
+			// "TotalAmtInPaisa": TotalAmtInPaisa,
+		},
+	)
 }
 func main() {
 	db.Connect() //db Connection
@@ -784,6 +812,7 @@ func main() {
 	router.GET("/viewandedititem", viewandedititemGet)
 	router.POST("/viewandedititem", viewandedititemPost)
 	router.GET("/ordersadminview", ordersAdminViewGet)
+	router.GET("/orderadminapprove", orderAdminApproveGet) // To View and approve, Selected Order from above function
 	//user Routes
 	router.GET("/", userIndexGet)
 	router.POST("/", userIndexPost)
