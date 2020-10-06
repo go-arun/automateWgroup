@@ -16,6 +16,10 @@ import (
 	razorpay "github.com/razorpay/razorpay-go"
 )
 
+constant (
+	ALL_RECORDS = 0
+)
+
 // to store otp_id received from SMS API Provider
 var otpIDfromProvider string
 
@@ -751,6 +755,17 @@ func viewandedititemPost(c *gin.Context) {
 
 	}
 }
+
+func ordersAdminViewGet(c *gin.Context){
+	pendingOrders := db.GetOrderHistory(ALL_RECORDS)
+	c.HTML(
+		http.StatusOK,
+		"orders_adminview.html", gin.H{
+			"delWarning"	:   "none",
+			"updateSucess"	: "block",
+			"PendingOrders" : pendingOrders,
+		})
+}
 func main() {
 	db.Connect() //db Connection
 	router := gin.Default()
@@ -764,6 +779,7 @@ func main() {
 	router.StaticFS("/file", http.Dir("pics"))
 	router.GET("/viewandedititem", viewandedititemGet)
 	router.POST("/viewandedititem", viewandedititemPost)
+	router.GET("/ordersadminview",ordersAdminViewGet)
 	//user Routes
 	router.GET("/", userIndexGet)
 	router.POST("/", userIndexPost)
