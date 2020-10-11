@@ -18,7 +18,7 @@
     <div class="container mt-5 ">
             <div class="jumbotron  mx-auto p-5" style="width: 40%;">
                 <h4 class="p-1">Create New Account </h4>
-                <form  class="form-block pb-3" method="POST" onsubmit="return verify_inputs()">
+                <form  class="form-block pb-3" action="/signup" method="POST" onsubmit="return verify_inputs()">
                     <!-- FontAwesome -->
                                 <input name="mobile" id="mobile" type="text" maxlength="10" class="form-control p-1 m-1" onkeypress="return event.charCode >= 47 && event.charCode <= 57" placeholder="Mobile Number">
                                 <input name="cust_name" id="cust_name" type="text" class="form-control p-1 m-1" placeholder="Your Name">
