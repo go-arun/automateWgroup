@@ -16,12 +16,12 @@
         <div class="row">
               <div class="lg-4">
               <div id="purchase" onclick="toggleCtrls(this.id)" class="admn_buttons btn btn-primary m-1">Purchase</div><br>
-              <div id="orders" onclick="location.href='http://ec2-18-220-113-48.us-east-2.compute.amazonaws.com:8080/ordersadminview';" class="admn_buttons btn btn-primary m-1">Execure Orders</div><br>
+              <div id="orders" onclick="location.href='http://ec2-18-220-113-48.us-east-2.compute.amazonaws.com/ordersadminview';" class="admn_buttons btn btn-primary m-1">Execure Orders</div><br>
               <div id="stockadj" onclick="toggleCtrls(this.id)" class="admn_buttons btn btn-primary m-1">View Stock List</div><br>
               <div id="category" onclick="toggleCtrls(this.id)" class="admn_buttons btn btn-primary m-1">New Fish Catgory</div><br>
-              <div id="reports" onclick="location.href='http://ec2-18-220-113-48.us-east-2.compute.amazonaws.com:8080/reportallorders';" class="admn_buttons btn btn-primary m-1">Reports</div><br>
-              <div id="logout" onclick="location.href='http://ec2-18-220-113-48.us-east-2.compute.amazonaws.com:8080/logout';" class="admn_buttons btn btn-primary m-1">Logout</div><br>
-              <!-- <div id="logout" onclick="location.href='http://ec2-18-220-113-48.us-east-2.compute.amazonaws.com:8080/logout';" class="admn_buttons btn btn-primary m-1">Logout</div><br> -->
+              <div id="reports" onclick="location.href='http://ec2-18-220-113-48.us-east-2.compute.amazonaws.com/reportallorders';" class="admn_buttons btn btn-primary m-1">Reports</div><br>
+              <div id="logout" onclick="location.href='http://ec2-18-220-113-48.us-east-2.compute.amazonaws.com/logout';" class="admn_buttons btn btn-primary m-1">Logout</div><br>
+              <!-- <div id="logout" onclick="location.href='http://ec2-18-220-113-48.us-east-2.compute.amazonaws.com/logout';" class="admn_buttons btn btn-primary m-1">Logout</div><br> -->
           </div>
             <div class="lg-12 " style="border: 0px;"><!--Main DIV rightSide-->
               <form id="admin_form" action="/admin_panel" method="post" enctype="multipart/form-data" onsubmit="return verify_inputs()">
@@ -47,7 +47,7 @@
                     <input id="s_price" class="m-1" type="text" placeholder="Selling Price(Rs)" name="selling_price"><br>
                     <input id="p_qty" class="m-1" type="text" placeholder="Purchasing Quandity" name="purch_qty">
                     <div class="card"></div>
-                    <img id="fishImg" class="m-1" src="http://ec2-18-220-113-48.us-east-2.compute.amazonaws.com:8080/file/SEL.jpg" style="border: 1px solid #555;" alt="Fish Pic" width="190" height="150"><br>
+                    <img id="fishImg" class="m-1" src="http://ec2-18-220-113-48.us-east-2.compute.amazonaws.com/file/SEL.jpg" style="border: 1px solid #555;" alt="Fish Pic" width="190" height="150"><br>
                     <input class="m-1" type="submit" value="Update" />
                 </div>
                 <div id="stock_adj" style="display: none;">
@@ -128,11 +128,11 @@
       //to change image based on select tag
       function changeImageToo(){
         var fishid = document.getElementById("fishname").value
-        document.getElementById("fishImg").src = "http://ec2-18-220-113-48.us-east-2.compute.amazonaws.com:8080/file/" + fishid + ".jpg"
+        document.getElementById("fishImg").src = "http://ec2-18-220-113-48.us-east-2.compute.amazonaws.com/file/" + fishid + ".jpg"
       }
       function change_ImageToo(){
         var fishid = document.getElementById("fish_name").value
-        document.getElementById("fish_Img").src = "http://ec2-18-220-113-48.us-east-2.compute.amazonaws.com:8080/file/" + fishid + ".jpg"
+        document.getElementById("fish_Img").src = "http://ec2-18-220-113-48.us-east-2.compute.amazonaws.com/file/" + fishid + ".jpg"
       }
       function toggleCtrls(clicked_id) {
         document.getElementById("optedto").value = clicked_id
