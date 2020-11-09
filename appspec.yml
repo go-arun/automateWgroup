@@ -4,6 +4,8 @@ files:
   - source: /
     destination: /var/www/html/WordPress
 hooks:
+  BeforeInstall:
+    - location: Scripts/removeExtraFiles.sh
   AfterInstall:
     - location: Scripts/buidSource.sh
       timeout: 180
