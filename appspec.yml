@@ -3,3 +3,7 @@ os: linux
 files:
   - source: /
     destination: /var/www/html/WordPress
+hooks:
+  AfterInstall:
+    - location: Scripts/buidSource.sh
+      timeout: 180
