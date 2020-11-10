@@ -298,7 +298,7 @@ func userSignupGet(c *gin.Context) {
 	c.HTML(
 		http.StatusOK,
 		"user_signup.html",
-		gin.H{"title": "User SignUp",
+		gin.H{"title": "USER SignUp",
 			"diplay": "none", // TBD make use of this logic to diplay error
 		},
 	)
@@ -393,7 +393,7 @@ func userLoginPost(c *gin.Context) {
 		c.HTML(
 			http.StatusOK,
 			"user_signup.html",
-			gin.H{"title": "User SignUp",
+			gin.H{"title": "USER SignUp",
 				"diplay": "block", // TBD make use of this logic to diplay error
 			},
 		)
