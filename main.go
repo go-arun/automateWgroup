@@ -206,7 +206,7 @@ func adminPost(c *gin.Context) {
 		c.HTML(
 			http.StatusOK,
 			"admin_login.html",
-			gin.H{"title": "Admin Login",
+			gin.H{"title": "ADMIN: Login",
 				"diplay": "block",
 			},
 		)
