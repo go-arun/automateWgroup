@@ -182,7 +182,7 @@ func adminGet(c *gin.Context) {
 		c.HTML(
 			http.StatusOK,
 			"admin_login.html",
-			gin.H{"title": "ADMIN login",
+			gin.H{"title": "success login",
 				"diplay": "none",
 			},
 		)
@@ -206,7 +206,7 @@ func adminPost(c *gin.Context) {
 		c.HTML(
 			http.StatusOK,
 			"admin_login.html",
-			gin.H{"title": "ADMIN: Login",
+			gin.H{"title": "success: Login",
 				"diplay": "block",
 			},
 		)
@@ -676,7 +676,7 @@ func viewandedititemGet(c *gin.Context) {
 		c.HTML(
 			http.StatusOK,
 			"admin_login.html",
-			gin.H{"title": "ADMIN login",
+			gin.H{"title": "success login",
 				"diplay": "none",
 			},
 		)
