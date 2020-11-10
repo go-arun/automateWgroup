@@ -9,5 +9,4 @@ hooks:
       runas: root
   AfterInstall:
     - location: Scripts/buidSource.sh
-      timeout: 180
       runas: root
