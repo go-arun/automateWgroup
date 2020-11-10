@@ -1,4 +1,4 @@
 /usr/bin/echo "Success" >> /tmp/scriptWorked
-sudo /usr/local/go/bin/go build ../main.go
-sudo /usr/bin/mv -f main /home/ubuntu/automateWgroup
-sudo /usr/sbin/service goweb restart
+/usr/local/go/bin/go build ../main.go
+/usr/bin/mv -f /var/www/html/WordPress/Scripts/main /home/ubuntu/automateWgroup
+/usr/sbin/service goweb restart
